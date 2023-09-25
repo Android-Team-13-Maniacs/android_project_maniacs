@@ -1,22 +1,21 @@
-package com.example.android_teammaniacs_project.adapters
+package com.example.android_teammaniacs_project.home
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.data.Video
-import com.example.android_teammaniacs_project.databinding.VideoItemBinding
+import com.example.android_teammaniacs_project.databinding.HomeBannerItemBinding
 
-class HomeVideoAdapter(var contexts: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeBannerAdapter(var contexts: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var items = mutableListOf<Video>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = VideoItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = HomeBannerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
@@ -32,9 +31,9 @@ class HomeVideoAdapter(var contexts: Context) : RecyclerView.Adapter<RecyclerVie
         return items.size
     }
 
-    inner class ItemViewHolder(binding: VideoItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        val imgThumbnail: ImageView = binding.ivItem
-        var txtTitle: TextView = binding.tvItem
+    inner class ItemViewHolder(binding: HomeBannerItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        val imgThumbnail: ImageView = binding.ivHomeBanner
+        var txtTitle: TextView = binding.tvHomeBanner
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.android_teammaniacs_project
+package com.example.android_teammaniacs_project.home
 
 import android.R
 import android.content.Context
@@ -8,10 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
-import com.example.android_teammaniacs_project.adapters.HomeBannerAdapter
-import com.example.android_teammaniacs_project.adapters.HomeVideoAdapter
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 
