@@ -33,8 +33,8 @@ class HomeVideoAdapter(var contexts: Context) : RecyclerView.Adapter<RecyclerVie
     }
 
     inner class ItemViewHolder(binding: VideoItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        val imgThumbnail: ImageView = binding.itemImageView
-        var txtTitle: TextView = binding.itemTitleText
+        val imgThumbnail: ImageView = binding.ivItem
+        var txtTitle: TextView = binding.tvItem
     }
 
 }

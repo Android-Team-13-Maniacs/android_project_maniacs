@@ -43,9 +43,9 @@ class MyVideoFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        videoRecyclerView.adapter = listAdapter
+        rvVideo.adapter = listAdapter
         val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        videoRecyclerView.layoutManager = gridManager
+        rvVideo.layoutManager = gridManager
     }
 
     override fun onDestroyView() {

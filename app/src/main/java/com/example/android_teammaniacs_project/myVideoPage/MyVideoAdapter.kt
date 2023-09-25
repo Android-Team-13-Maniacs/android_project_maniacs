@@ -31,7 +31,7 @@ class MyVideoAdapter : RecyclerView.Adapter<MyVideoAdapter.ViewHolder>(){
     RecyclerView.ViewHolder(binding.root) {
         
         fun bind(item: Video) = with(binding) {
-            itemTitleText.text = item.title
+            tvItem.text = item.title
         }
     }
 }

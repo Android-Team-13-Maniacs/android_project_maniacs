@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/home_banner_iv"
+        android:id="@+id/iv_home_banner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/home_banner_tv"
+        android:id="@+id/tv_home_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -31,12 +31,12 @@
         android:textColor="@color/white"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/home_description_tv"
+        app:layout_constraintBottom_toTopOf="@+id/tv_home_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/home_description_tv"
+        android:id="@+id/tv_home_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -46,7 +46,7 @@
         android:text="description"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/home_banner_iv"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_home_banner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

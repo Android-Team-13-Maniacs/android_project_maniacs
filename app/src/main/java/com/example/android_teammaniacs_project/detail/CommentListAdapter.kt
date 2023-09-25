@@ -3,7 +3,7 @@ package com.example.android_teammaniacs_project.detail
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android_teammaniacs_project.databinding.ComentItemBinding
+import com.example.android_teammaniacs_project.databinding.CommentItemBinding
 
 class CommentListAdapter : RecyclerView.Adapter<CommentListAdapter.ViewHolder>() {
     private val list = ArrayList<CommentModel>()
@@ -15,7 +15,7 @@ class CommentListAdapter : RecyclerView.Adapter<CommentListAdapter.ViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentListAdapter.ViewHolder {
         return ViewHolder(
-            ComentItemBinding.inflate(
+            CommentItemBinding.inflate(
                 LayoutInflater.from(parent.context)
             )
         )
@@ -31,7 +31,7 @@ class CommentListAdapter : RecyclerView.Adapter<CommentListAdapter.ViewHolder>()
     }
 
     class ViewHolder(
-        private val binding: ComentItemBinding
+        private val binding: CommentItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CommentModel) = with(binding) {
 //            Glide.with(itemView).load(item.url)
