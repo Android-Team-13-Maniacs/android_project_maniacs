@@ -5,4 +5,7 @@
     <string name="main_tab_search_title">Search</string>
     <string name="main_tab_my_videos_title">My Videos</string>
     <string name="video_item_title_demo">임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트</string>
+    <string name="my_video_fragment_title_text">MyPage</string>
+    <string name="my_video_fragment_profile_name_demo">프로필 이름</string>
+    <string name="my_video_fragment_favorite_title_text">My Favorite Video</string>
 </resources>
