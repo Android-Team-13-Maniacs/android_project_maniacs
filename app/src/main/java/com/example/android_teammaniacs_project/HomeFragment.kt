@@ -63,14 +63,14 @@ class HomeFragment : Fragment() {
         val adapter = HomeBannerAdapter(contexts)
         adapter.items = testData
         adapter.notifyDataSetChanged()
-        binding?.homeBannerSectionRecyclerview?.adapter = adapter
+        binding?.rvHomeBanner?.adapter = adapter
 
 
         //임시 스피너
         val arraySpinner = arrayOf(
             "1", "2", "3", "4", "5", "6", "7"
         )
-        val s = binding?.homeSectionSpinner
+        val s = binding?.homeSpinner
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             contexts,
             R.layout.simple_spinner_item, arraySpinner
@@ -82,12 +82,12 @@ class HomeFragment : Fragment() {
         val adapter2 = HomeVideoAdapter(contexts)
         adapter2.items = testData
         adapter2.notifyDataSetChanged()
-        binding?.homeSection1Recyclerview?.adapter = adapter2
+        binding?.rvHomeSection1?.adapter = adapter2
 
         val adapter3 = HomeVideoAdapter(contexts)
         adapter3.items = testData
         adapter3.notifyDataSetChanged()
-        binding?.homeSection2Recyclerview?.adapter = adapter3
+        binding?.rvHomeSection2?.adapter = adapter3
     }
 
     companion object {

@@ -33,8 +33,8 @@ class HomeBannerAdapter(var contexts: Context) : RecyclerView.Adapter<RecyclerVi
     }
 
     inner class ItemViewHolder(binding: HomeBannerItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        val imgThumbnail: ImageView = binding.homeBannerImageview
-        var txtTitle: TextView = binding.homeBannerTitleTextview
+        val imgThumbnail: ImageView = binding.homeBannerIv
+        var txtTitle: TextView = binding.homeBannerTv
     }
 
 }
