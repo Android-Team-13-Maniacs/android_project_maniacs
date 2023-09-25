@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.android_teammaniacs_project.Test3Fragment
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.MyVideoFragmentBinding
 
@@ -44,9 +43,9 @@ class MyVideoFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        videoRecyclerView.adapter = listAdapter
+        rvVideo.adapter = listAdapter
         val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        videoRecyclerView.layoutManager = gridManager
+        rvVideo.layoutManager = gridManager
     }
 
     override fun onDestroyView() {

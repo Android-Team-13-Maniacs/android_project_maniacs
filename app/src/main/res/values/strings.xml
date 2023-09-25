@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">Android_teamManiacs_project</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <string name="main_tab_home_title">Home</string>
     <string name="main_tab_search_title">Search</string>
     <string name="main_tab_my_videos_title">My Videos</string>
+
     <string name="video_item_title_demo">임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트</string>
+
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
@@ -17,7 +20,16 @@
         <item>Scala</item>
         <item>Perl</item>
     </string-array>
+
     <string name="my_video_fragment_title_text">MyPage</string>
     <string name="my_video_fragment_profile_name_demo">프로필 이름</string>
     <string name="my_video_fragment_favorite_title_text">My Favorite Video</string>
+    <string name="home_channel_title">Channels by Category</string>
+    <string name="search_category_all_btn">All</string>
+    <string name="search_category_music_btn">Music</string>
+    <string name="search_category_cinema_btn">Cinema</string>
+    <string name="search_category_kpop_btn">Kpop</string>
+    <string name="detail_like_icon">Like</string>
+    <string name="detail_mylist_icon">My List</string>
+    <string name="detail_share_icon">Share</string>
 </resources>
