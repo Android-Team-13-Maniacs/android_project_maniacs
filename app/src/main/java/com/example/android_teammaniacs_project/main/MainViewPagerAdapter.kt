@@ -3,6 +3,7 @@ package com.example.android_teammaniacs_project.main
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.android_teammaniacs_project.HomeFragment
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.Test1Fragment
 import com.example.android_teammaniacs_project.Test2Fragment
@@ -17,7 +18,7 @@ class MainViewPagerAdapter(
 //    페이지 생성 관리
     init {
         fragments.add(
-            MainTabs(Test1Fragment.newInstance(), R.string.main_tab_home_title)
+            MainTabs(HomeFragment.newInstance(), R.string.main_tab_home_title)
         )
         fragments.add(
             MainTabs(Test2Fragment.newInstance(), R.string.main_tab_search_title),
