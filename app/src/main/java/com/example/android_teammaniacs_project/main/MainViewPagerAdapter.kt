@@ -8,6 +8,7 @@ import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.Test1Fragment
 import com.example.android_teammaniacs_project.Test2Fragment
 import com.example.android_teammaniacs_project.Test3Fragment
+import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
 
 class MainViewPagerAdapter(
     fragmentActivity: FragmentActivity
@@ -24,7 +25,7 @@ class MainViewPagerAdapter(
             MainTabs(Test2Fragment.newInstance(), R.string.main_tab_search_title),
         )
         fragments.add(
-            MainTabs(Test3Fragment.newInstance(), R.string.main_tab_my_videos_title),
+            MainTabs(MyVideoFragment.newInstance(), R.string.main_tab_my_videos_title),
         )
     }
 
