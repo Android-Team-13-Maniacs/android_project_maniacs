@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="Channels by Category"
+                android:text="@string/home_channel_title"
                 android:textColor="@color/white"
                 android:textSize="24sp" />
 

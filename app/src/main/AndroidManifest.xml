@@ -17,10 +17,10 @@
             android:name=".detail.CommentModel"
             android:exported="false" />
         <activity
-            android:name=".main.MainActivity"
+            android:name=".detail.VideoDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".detail.VideoDetailActivity"
+            android:name=".main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -5,9 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.android_teammaniacs_project.HomeFragment
 import com.example.android_teammaniacs_project.R
-import com.example.android_teammaniacs_project.Test1Fragment
-import com.example.android_teammaniacs_project.Test2Fragment
-import com.example.android_teammaniacs_project.Test3Fragment
+import com.example.android_teammaniacs_project.SearchFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
 
 class MainViewPagerAdapter(
@@ -22,7 +20,7 @@ class MainViewPagerAdapter(
             MainTabs(HomeFragment.newInstance(), R.string.main_tab_home_title)
         )
         fragments.add(
-            MainTabs(Test2Fragment.newInstance(), R.string.main_tab_search_title),
+            MainTabs(SearchFragment.newInstance(), R.string.main_tab_search_title),
         )
         fragments.add(
             MainTabs(MyVideoFragment.newInstance(), R.string.main_tab_my_videos_title),

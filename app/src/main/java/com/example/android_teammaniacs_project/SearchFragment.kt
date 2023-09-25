@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-class Test1Fragment : Fragment() {
+class SearchFragment : Fragment() {
 
 
     override fun onCreateView(
@@ -14,10 +14,10 @@ class Test1Fragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_test1, container, false)
+        return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
     companion object {
-        fun newInstance() = Test1Fragment()
+        fun newInstance() = SearchFragment()
     }
 }

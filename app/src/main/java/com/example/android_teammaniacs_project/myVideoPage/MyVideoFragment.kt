@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.android_teammaniacs_project.Test3Fragment
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.MyVideoFragmentBinding
 
