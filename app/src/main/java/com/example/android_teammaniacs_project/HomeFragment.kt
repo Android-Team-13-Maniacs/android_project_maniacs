@@ -65,6 +65,8 @@ class HomeFragment : Fragment() {
         adapter.notifyDataSetChanged()
         binding?.homeBannerSectionRecyclerview?.adapter = adapter
 
+
+        //임시 스피너
         val arraySpinner = arrayOf(
             "1", "2", "3", "4", "5", "6", "7"
         )
