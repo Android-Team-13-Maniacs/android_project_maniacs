@@ -40,23 +40,23 @@ class HomeFragment : Fragment() {
         val testData = mutableListOf<Video>()
         testData.add(
             Video(
-                Uri.parse("https://th.bing.com/th/id/R.be910db951bafca7bbf5cd2c84600731?rik=aauxFHegqo3a5w&riu=http%3a%2f%2fstatic3.businessinsider.com%2fimage%2f5484d9d1eab8ea3017b17e29%2f9-science-backed-reasons-to-own-a-dog.jpg&ehk=xgoJIFryMSERKzmXor2k3oOtE1fWtrgYC7i0yek0fQU%3d&risl=&pid=ImgRaw&r=0"),
-                "강아지는 귀엽다",
-                "https://th.bing.com/th/id/R.be910db951bafca7bbf5cd2c84600731?rik=aauxFHegqo3a5w&riu=http%3a%2f%2fstatic3.businessinsider.com%2fimage%2f5484d9d1eab8ea3017b17e29%2f9-science-backed-reasons-to-own-a-dog.jpg&ehk=xgoJIFryMSERKzmXor2k3oOtE1fWtrgYC7i0yek0fQU%3d&risl=&pid=ImgRaw&r=0"
+                Uri.parse("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F241%2F2022%2F07%2F01%2F0003218781_001_20220701115801485.jpg&type=sc960_832"),
+                "STAYC",
+                "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F241%2F2022%2F07%2F01%2F0003218781_001_20220701115801485.jpg&type=sc960_832"
             )
         )
         testData.add(
             Video(
-                Uri.parse("https://img.freepik.com/premium-vector/cute-dog-cartoon-illustration_569774-126.jpg"),
-                "강아지는 귀엽다",
-                "https://img.freepik.com/premium-vector/cute-dog-cartoon-illustration_569774-126.jpg"
+                Uri.parse("https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.theqoo.net%2Fimg%2FVFgJV.png&type=a340"),
+                "NewJeans",
+                "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.theqoo.net%2Fimg%2FVFgJV.png&type=a340"
             )
         )
         testData.add(
             Video(
-                Uri.parse("https://img.freepik.com/premium-vector/cute-dog-cartoon-illustration_569774-126.jpg"),
-                "강아지는 귀엽다",
-                "https://img.freepik.com/premium-vector/cute-dog-cartoon-illustration_569774-126.jpg"
+                Uri.parse("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5095%2F2022%2F07%2F09%2F0000974046_001_20220709084001248.jpg&type=sc960_832"),
+                "aespa",
+                "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5095%2F2022%2F07%2F09%2F0000974046_001_20220709084001248.jpg&type=sc960_832"
             )
         )
 
@@ -68,7 +68,7 @@ class HomeFragment : Fragment() {
 
         //임시 스피너
         val arraySpinner = arrayOf(
-            "1", "2", "3", "4", "5", "6", "7"
+            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
         )
         val s = binding?.homeSpinner
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
