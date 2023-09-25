@@ -36,6 +36,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        //임의로 uri 넣어둠
         val testData = mutableListOf<Video>()
         testData.add(
             Video(
