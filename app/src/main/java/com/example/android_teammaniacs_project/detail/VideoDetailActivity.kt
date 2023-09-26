@@ -36,6 +36,30 @@ class VideoDetailActivity : AppCompatActivity() {
 
         initView()
 
+    }
+
+    private fun initView() = with(binding) {
+        //recycler view
+        commentList.adapter = recyclerView
+
+        //test data
+        val list = ArrayList<CommentModel>()
+        for (i in 0..3) {
+            list.add(
+                CommentModel(
+                    0,
+                    com.example.android_teammaniacs_project.R.drawable.dog,
+                    "$i name",
+                    "$i date",
+                    "$i coment"
+                )
+            )
+            for (i in 0..3) {
+                list.add(CommentModel(0, R.drawable.dog, "$i name", "$i date", "$i coment"))
+            }
+            recyclerView.addItems(list)
+        }
+
         val shareButton =
             findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
 
@@ -67,31 +91,6 @@ class VideoDetailActivity : AppCompatActivity() {
             // 버튼의 상태에 따라 이미지 변경
             binding.btnAddMylist.isSelected = isAdded
         }
-
-    }
-
-    private fun initView() = with(binding) {
-        //recycler view
-        commentList.adapter = recyclerView
-
-        //test data
-        val list = ArrayList<CommentModel>()
-        for (i in 0..3) {
-            list.add(
-                CommentModel(
-                    0,
-                    com.example.android_teammaniacs_project.R.drawable.dog,
-                    "$i name",
-                    "$i date",
-                    "$i coment"
-                )
-            )
-            for (i in 0..3) {
-                list.add(CommentModel(0, R.drawable.dog, "$i name", "$i date", "$i coment"))
-            }
-            recyclerView.addItems(list)
-        }
-
 
 
     }

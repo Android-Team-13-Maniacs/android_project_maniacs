@@ -6,17 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.android_teammaniacs_project.R
-import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.MyVideoFragmentBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 
 class MyVideoFragment : Fragment() {
 
-    private var _binding : MyVideoFragmentBinding? = null
+    private var _binding: MyVideoFragmentBinding? = null
     private val binding get() = _binding!!
-    private var videoList = ArrayList<Video>()
 
     companion object {
         fun newInstance() = MyVideoFragment()
@@ -28,33 +27,34 @@ class MyVideoFragment : Fragment() {
         MyVideoAdapter { position, video ->
             val intent = Intent(context, VideoDetailActivity::class.java)
             intent.apply {
-                putExtra(MY_VIDEO_POSITION,position)
-                putExtra(MY_VIDEO_MODEL,video)
+                putExtra(MY_VIDEO_POSITION, position)
+                putExtra(MY_VIDEO_MODEL, video)
             }
             startActivity(intent)
             activity?.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out)
         }
     }
 
+    private val viewModel: MyVideoViewModel by viewModels { MyVidelViewModelFactory() }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        _binding =  MyVideoFragmentBinding.inflate(inflater, container, false)
+        _binding = MyVideoFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setDemoData()
         initView()
+        initViweModel()
     }
 
-    private fun setDemoData() {
-        for(i in 1..10) {
-            videoList.add(Video(null, "title$i", null))
+    private fun initViweModel()= with(viewModel) {
+        list.observe(viewLifecycleOwner){
+            listAdapter.submitList(it)
         }
-        listAdapter.addItems(videoList)
     }
 
     private fun initView() = with(binding) {

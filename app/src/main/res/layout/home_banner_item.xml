@@ -16,6 +16,7 @@
         android:maxHeight="360dp"
         android:minHeight="301dp"
         android:scaleType="centerCrop"
+        android:src="@drawable/dog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
