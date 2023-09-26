@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.R
@@ -16,22 +14,7 @@ import com.example.android_teammaniacs_project.databinding.VideoItemBinding
 
 class HomeBannerAdapter(
     private val onClickItem: (Int, Video) -> Unit,
-) : ListAdapter<Video, HomeBannerAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<Video>() {
-        override fun areItemsTheSame(
-            oldItem: Video, newItem: Video
-        ): Boolean {
-            return oldItem.sourceUri == newItem.sourceUri
-        }
-
-        override fun areContentsTheSame(
-            oldItem: Video,
-            newItem: Video
-        ): Boolean {
-            return oldItem == newItem
-        }
-    }
-) {
+) : RecyclerView.Adapter<HomeBannerAdapter.ViewHolder>() {
 
     var list = ArrayList<Video>()
 
@@ -44,9 +27,16 @@ class HomeBannerAdapter(
 
 
     override fun onBindViewHolder(holder: HomeBannerAdapter.ViewHolder, position: Int) {
-        val item = getItem(position)
+        val item = list[position]
         holder.bind(item)
     }
+
+
+
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
 
     class ViewHolder(
         private val binding: HomeBannerItemBinding,

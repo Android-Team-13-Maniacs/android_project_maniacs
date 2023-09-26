@@ -5,33 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.HomeBannerItemBinding
 import com.example.android_teammaniacs_project.databinding.VideoItemBinding
-import com.example.android_teammaniacs_project.myVideoPage.MyVideoAdapter
 
 class HomeVideoAdapter(
     private val onClickItem: (Int, Video) -> Unit,
-) : ListAdapter<Video, HomeVideoAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<Video>() {
-        override fun areItemsTheSame(
-            oldItem: Video, newItem: Video
-        ): Boolean {
-            return oldItem.sourceUri == newItem.sourceUri
-        }
-
-        override fun areContentsTheSame(
-            oldItem: Video,
-            newItem: Video
-        ): Boolean {
-            return oldItem == newItem
-        }
-    }
-) {
+) : RecyclerView.Adapter<HomeVideoAdapter.ViewHolder>() {
 
     var list = ArrayList<Video>()
 
@@ -44,9 +26,15 @@ class HomeVideoAdapter(
 
 
     override fun onBindViewHolder(holder: HomeVideoAdapter.ViewHolder, position: Int) {
-        val item = getItem(position)
+        val item = list[position]
         holder.bind(item)
     }
+
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
+
     class ViewHolder(
         private val binding: VideoItemBinding,
         private val onClickItem: (Int, Video) -> Unit,
