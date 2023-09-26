@@ -1,5 +1,6 @@
 package com.example.android_teammaniacs_project.myVideoPage
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,17 +9,29 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.MyVideoFragmentBinding
+import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 
 class MyVideoFragment : Fragment() {
 
     private var _binding : MyVideoFragmentBinding? = null
     private val binding get() = _binding!!
     private var videoList = ArrayList<Video>()
-    private val listAdapter by lazy {
-        MyVideoAdapter()
-    }
+
     companion object {
         fun newInstance() = MyVideoFragment()
+        val MY_VIDEO_POSITION = "my_video_position"
+        val MY_VIDEO_MODEL = "my_video_model"
+    }
+
+    private val listAdapter by lazy {
+        MyVideoAdapter { position, video ->
+            val intent = Intent(context, VideoDetailActivity::class.java)
+            intent.apply {
+                putExtra(MY_VIDEO_POSITION,position)
+                putExtra(MY_VIDEO_MODEL,video)
+            }
+            startActivity(intent)
+        }
     }
 
     override fun onCreateView(
