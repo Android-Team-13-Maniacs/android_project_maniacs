@@ -243,4 +243,7 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
+##Google API Key
+/app/src/main/java/com/example/android_teammaniacs_project/constants/GoogleKey.kt
+
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,windows,macos,kotlin
