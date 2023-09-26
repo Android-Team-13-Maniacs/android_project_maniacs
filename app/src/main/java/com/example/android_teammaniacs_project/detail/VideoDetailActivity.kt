@@ -86,6 +86,8 @@ class VideoDetailActivity : AppCompatActivity() {
             // 토스트 메시지 추가
             val toastMessage = if (isLiked) "좋아요가 눌렸습니다." else "좋아요가 취소되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
+
+
         }
 
 
@@ -95,14 +97,19 @@ class VideoDetailActivity : AppCompatActivity() {
 
             // 버튼의 상태에 따라 이미지 변경
             binding.btnAddMylist.isSelected = isAdded
-
             // 토스트 메시지 추가
             val toastMessage = if (isAdded) "내 목록에 추가되었습니다." else "내 목록에서 삭제되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
         }
-
+        val backButton = findViewById<Button>(R.id.btn_back)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
     }
+
+
+
 
     override fun onBackPressed() {
         super.onBackPressed()
