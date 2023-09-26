@@ -67,6 +67,10 @@ class VideoDetailActivity : AppCompatActivity() {
             // 버튼의 상태에 따라 이미지 변경
             binding.btnAddMylist.isSelected = isAdded
         }
+        val backButton = findViewById<Button>(R.id.btn_back)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
 
     }
 
