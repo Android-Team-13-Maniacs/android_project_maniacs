@@ -37,6 +37,30 @@ class VideoDetailActivity : AppCompatActivity() {
 
         initView()
 
+    }
+
+    private fun initView() = with(binding) {
+        //recycler view
+        commentList.adapter = recyclerView
+
+        //test data
+        val list = ArrayList<CommentModel>()
+        for (i in 0..3) {
+            list.add(
+                CommentModel(
+                    0,
+                    com.example.android_teammaniacs_project.R.drawable.dog,
+                    "$i name",
+                    "$i date",
+                    "$i coment"
+                )
+            )
+            for (i in 0..3) {
+                list.add(CommentModel(0, R.drawable.dog, "$i name", "$i date", "$i coment"))
+            }
+            recyclerView.addItems(list)
+        }
+
         val shareButton =
             findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
 
@@ -76,31 +100,6 @@ class VideoDetailActivity : AppCompatActivity() {
             val toastMessage = if (isAdded) "내 목록에 추가되었습니다." else "내 목록에서 삭제되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
         }
-
-    }
-
-    private fun initView() = with(binding) {
-        //recycler view
-        commentList.adapter = recyclerView
-
-        //test data
-        val list = ArrayList<CommentModel>()
-        for (i in 0..3) {
-            list.add(
-                CommentModel(
-                    0,
-                    com.example.android_teammaniacs_project.R.drawable.dog,
-                    "$i name",
-                    "$i date",
-                    "$i coment"
-                )
-            )
-            for (i in 0..3) {
-                list.add(CommentModel(0, R.drawable.dog, "$i name", "$i date", "$i coment"))
-            }
-            recyclerView.addItems(list)
-        }
-
 
 
     }
