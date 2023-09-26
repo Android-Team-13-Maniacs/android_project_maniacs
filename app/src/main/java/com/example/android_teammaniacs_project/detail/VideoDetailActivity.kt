@@ -7,6 +7,8 @@ import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBi
 
 class VideoDetailActivity : AppCompatActivity() {
     private lateinit var binding: VideoDetailActivityBinding
+    private var isLiked = false // "Like" 상태를 나타내는 변수
+    private var isAdded = false // "My List" 상태를 나타내는 변수
 
     private val recyclerView by lazy {
         CommentListAdapter()
@@ -17,6 +19,24 @@ class VideoDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initView()
+
+        binding.btnLike.setOnClickListener {
+            // 상태 변경
+            isLiked = !isLiked
+
+            // 버튼의 상태에 따라 이미지 변경
+            binding.btnLike.isSelected = isLiked
+        }
+
+
+        binding.btnAddMylist.setOnClickListener {
+            // 상태 변경
+            isAdded = !isAdded
+
+            // 버튼의 상태에 따라 이미지 변경
+            binding.btnAddMylist.isSelected = isAdded
+        }
+
     }
 
     private fun initView() = with(binding) {
