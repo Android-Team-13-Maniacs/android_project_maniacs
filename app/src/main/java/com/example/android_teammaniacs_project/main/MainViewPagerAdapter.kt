@@ -5,7 +5,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.android_teammaniacs_project.home.HomeFragment
 import com.example.android_teammaniacs_project.R
-import com.example.android_teammaniacs_project.search.SearchFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
 
 class MainViewPagerAdapter(
