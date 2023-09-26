@@ -12,6 +12,12 @@ class SearchAdapter(
 
     fun addItems(items: List<Video>) {
         list.addAll(items)
+        notifyDataSetChanged()
+    }
+
+    fun clearItems() {
+        list.clear()
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchAdapter.ViewHolder {

@@ -1,10 +1,13 @@
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.android_teammaniacs_project.constants.GoogleKey
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentSearchBinding
@@ -12,6 +15,9 @@ import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import android.widget.Button
+import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
+import com.example.android_teammaniacs_project.search.SearchViewModel
+import com.example.android_teammaniacs_project.search.SearchViewModelFactory
 
 class SearchFragment : Fragment() {
 
@@ -36,6 +42,19 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private val demoList = ArrayList<Video>()
+    private lateinit var viewModel: SearchViewModel
+
+    val key = GoogleKey.KEY
+    val part = "snippet"
+    val maxResults = 20
+    val order = "date"
+    val type = "video"
+
+    override fun onAttach(context: Context) {
+        viewModel =
+            ViewModelProvider(this, SearchViewModelFactory(apiService))[SearchViewModel::class.java]
+        super.onAttach(context)
+    }
 
     private var selectedButton: Button? = null
 
@@ -50,6 +69,8 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        observeViewModel()
+    }
 
         val btnAll = view.findViewById<Button>(R.id.btn_all)
         val btnMusic = view.findViewById<Button>(R.id.btn_music)
@@ -93,6 +114,10 @@ class SearchFragment : Fragment() {
                 return true
             }
         })
+    private fun observeViewModel() {
+        viewModel.searchResults.observe(viewLifecycleOwner) {items ->
+            listAdapter.addItems(items)
+        }
     }
 
     private fun initView() = with(binding) {
@@ -102,9 +127,19 @@ class SearchFragment : Fragment() {
 
         for (i in 1..10) {
             demoList.add(Video(null, "title$i", null))
+        imgSearch.setOnClickListener {
+            val q = etSearch.text.toString()
+            if (q != "") {
+                listAdapter.clearItems()
+                viewModel.searchView(key, part, maxResults, order, q, type)
+            } else {
+
+            }
+
         }
         listAdapter.addItems(demoList)
     }
+
 
     private fun setButtonSelected(button: Button) {
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBinding
@@ -36,42 +37,6 @@ class VideoDetailActivity : AppCompatActivity() {
 
         initView()
 
-        val shareButton =
-            findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
-
-
-        shareButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "video/*"
-
-            // String으로 받아서 넣기
-            val sendMessage = "이렇게 스트링으로 만들어서 넣어주면 됩니다."
-            intent.putExtra(Intent.EXTRA_TEXT, sendMessage)
-            val shareIntent = Intent.createChooser(intent, "share")
-            startActivity(shareIntent)
-        }
-
-        binding.btnLike.setOnClickListener {
-            // 상태 변경
-            isLiked = !isLiked
-
-            // 버튼의 상태에 따라 이미지 변경
-            binding.btnLike.isSelected = isLiked
-        }
-
-
-        binding.btnAddMylist.setOnClickListener {
-            // 상태 변경
-            isAdded = !isAdded
-
-            // 버튼의 상태에 따라 이미지 변경
-            binding.btnAddMylist.isSelected = isAdded
-        }
-        val backButton = findViewById<Button>(R.id.btn_back)
-        backButton.setOnClickListener {
-            onBackPressed()
-        }
-
     }
 
     private fun initView() = with(binding) {
@@ -96,6 +61,56 @@ class VideoDetailActivity : AppCompatActivity() {
             recyclerView.addItems(list)
         }
 
+        val shareButton =
+            findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
+
+
+        shareButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "video/*"
+
+            // String으로 받아서 넣기
+            val sendMessage = "이렇게 스트링으로 만들어서 넣어주면 됩니다."
+            intent.putExtra(Intent.EXTRA_TEXT, sendMessage)
+            val shareIntent = Intent.createChooser(intent, "share")
+            startActivity(shareIntent)
+        }
+
+        binding.btnLike.setOnClickListener {
+            // 상태 변경
+            isLiked = !isLiked
+
+            // 버튼의 상태에 따라 이미지 변경
+            binding.btnLike.isSelected = isLiked
+
+            // 토스트 메시지 추가
+            val toastMessage = if (isLiked) "좋아요가 눌렸습니다." else "좋아요가 취소되었습니다."
+            Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
+        }
+
+
+        binding.btnAddMylist.setOnClickListener {
+            // 상태 변경
+            isAdded = !isAdded
+
+            // 버튼의 상태에 따라 이미지 변경
+            binding.btnAddMylist.isSelected = isAdded
+        }
+        val backButton = findViewById<Button>(R.id.btn_back)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+
+    }
+
+    private fun initView() = with(binding) {
+        //recycler view
+        commentList.adapter = recyclerView
+
+            // 토스트 메시지 추가
+            val toastMessage = if (isAdded) "내 목록에 추가되었습니다." else "내 목록에서 삭제되었습니다."
+            Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
+        }
 
 
     }
