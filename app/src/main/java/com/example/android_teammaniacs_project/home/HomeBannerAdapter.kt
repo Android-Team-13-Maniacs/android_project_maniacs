@@ -7,33 +7,57 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.HomeBannerItemBinding
+import com.example.android_teammaniacs_project.databinding.VideoItemBinding
 
-class HomeBannerAdapter(var contexts: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeBannerAdapter(
+    private val onClickItem: (Int, Video) -> Unit,
+) : RecyclerView.Adapter<HomeBannerAdapter.ViewHolder>() {
 
-    var items = mutableListOf<Video>()
+    var list = ArrayList<Video>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = HomeBannerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ItemViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeBannerAdapter.ViewHolder {
+        return ViewHolder(
+            HomeBannerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            onClickItem
+        )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Glide.with(contexts)
-            .load(items[position].sourceUri)
-            .into((holder as ItemViewHolder).imgThumbnail)
 
-        holder.txtTitle.text = items[position].title
+    override fun onBindViewHolder(holder: HomeBannerAdapter.ViewHolder, position: Int) {
+        val item = list[position]
+        holder.bind(item)
     }
+
+
 
     override fun getItemCount(): Int {
-        return items.size
+        return list.size
     }
 
-    inner class ItemViewHolder(binding: HomeBannerItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        val imgThumbnail: ImageView = binding.ivHomeBanner
-        var txtTitle: TextView = binding.tvHomeBanner
+
+    class ViewHolder(
+        private val binding: HomeBannerItemBinding,
+        private val onClickItem: (Int, Video) -> Unit,
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Video) = with(binding) {
+            Glide.with(itemView).load(item.sourceUri)
+//                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
+//                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
+                .into(ivHomeBanner)
+            tvHomeBanner.text = item.title
+
+            //recyclerview item clicklistener
+            banner.setOnClickListener {
+                onClickItem(
+                    adapterPosition,
+                    item
+                )
+            }
+        }
     }
 
 }
