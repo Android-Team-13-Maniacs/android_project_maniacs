@@ -59,4 +59,9 @@ class VideoDetailActivity : AppCompatActivity() {
         }
         recyclerView.addItems(list)
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out)
+    }
 }

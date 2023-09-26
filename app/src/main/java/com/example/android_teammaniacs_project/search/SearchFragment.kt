@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentSearchBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
@@ -24,6 +25,7 @@ class SearchFragment : Fragment() {
                 putExtra(VIDEO_MODEL,video)
             }
             startActivity(intent)
+            activity?.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out)
         }
     }
 
