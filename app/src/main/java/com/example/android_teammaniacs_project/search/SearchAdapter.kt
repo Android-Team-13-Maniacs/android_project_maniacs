@@ -15,6 +15,11 @@ class SearchAdapter(
         notifyDataSetChanged()
     }
 
+    fun clearItems() {
+        list.clear()
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchAdapter.ViewHolder {
         return ViewHolder(
             VideoItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),

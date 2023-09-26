@@ -78,6 +78,7 @@ class SearchFragment : Fragment() {
         imgSearch.setOnClickListener {
             val q = etSearch.text.toString()
             if (q != "") {
+                listAdapter.clearItems()
                 viewModel.searchView(key, part, maxResults, order, q, type)
             } else {
 
