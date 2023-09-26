@@ -3,17 +3,16 @@ package com.example.android_teammaniacs_project.home
 import android.R
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
-import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
 
 
 class HomeFragment : Fragment() {
@@ -23,37 +22,35 @@ class HomeFragment : Fragment() {
         val HOME_VIDEO_MODEL = "home_video_model"
     }
 
-//    private val recyclerViewAdapter by lazy {
-//        HomeBannerAdapter(onClickItem= { position, video ->
-//            val intent = Intent(context, VideoDetailActivity::class.java)
-//            intent.apply {
-//                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
-//                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
-//            }
-//            startActivity(intent)
-//        }
-//        )
-//        HomeVideoAdapter(onClickItem= { position, video ->
-//            val intent = Intent(context, VideoDetailActivity::class.java)
-//            intent.apply {
-//                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
-//                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
-//            }
-//            startActivity(intent)
-//        })
-//    }
-
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var contexts: Context
+
+    private val viewModel: HomeViewModel by viewModels { HomeViewModelFactory() }
+
+
+    private val bannerAdapter by lazy {
+        HomeBannerAdapter(onClickItem= { position, video ->
+            startVideoDetailActivity(position, video)
+        })
+    }
+
+    private val section1Adapter by lazy {
+        HomeVideoAdapter(onClickItem= { position, video ->
+            startVideoDetailActivity(position, video)
+        })
+    }
+
+    private val section2Adapter by lazy {
+        HomeVideoAdapter(onClickItem= { position, video ->
+            startVideoDetailActivity(position, video)
+        })
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         contexts = context
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -65,8 +62,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //리사이클러뷰에 대한 초기화 필요
-        setupRecyclerView()
         initView()
+        initViewModel()
     }
 
     private fun initView()= with(binding) {
@@ -80,76 +77,41 @@ class HomeFragment : Fragment() {
             R.layout.simple_spinner_item, arraySpinner
         )
         spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_item)
-//        adapter.viewre setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         s?.adapter = spinnerAdapter
+    }
+
+    private fun initViewModel()= with(viewModel) {
+        list.observe(viewLifecycleOwner){
+            bannerAdapter.submitList(it)
+            section1Adapter.submitList(it)
+            section2Adapter.submitList(it)
+            setupRecyclerView()
+        }
+    }
+
+    private fun startVideoDetailActivity(position: Int, video: Video) {
+        val intent = Intent(context, VideoDetailActivity::class.java)
+        intent.apply {
+            putExtra(HOME_VIDEO_POSITION, position)
+            putExtra(HOME_VIDEO_MODEL, video)
+        }
+        startActivity(intent)
     }
 
 
     private fun setupRecyclerView()= with(binding) {
 
-        //임의로 uri 넣어둠
-        val testData = mutableListOf<Video>()
-        testData.add(
-            Video(
-                Uri.parse("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F241%2F2022%2F07%2F01%2F0003218781_001_20220701115801485.jpg&type=sc960_832"),
-                "STAYC",
-                "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F241%2F2022%2F07%2F01%2F0003218781_001_20220701115801485.jpg&type=sc960_832"
-            )
-        )
-        testData.add(
-            Video(
-                Uri.parse("https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.theqoo.net%2Fimg%2FVFgJV.png&type=a340"),
-                "NewJeans",
-                "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.theqoo.net%2Fimg%2FVFgJV.png&type=a340"
-            )
-        )
-        testData.add(
-            Video(
-                Uri.parse("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5095%2F2022%2F07%2F09%2F0000974046_001_20220709084001248.jpg&type=sc960_832"),
-                "aespa",
-                "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5095%2F2022%2F07%2F09%2F0000974046_001_20220709084001248.jpg&type=sc960_832"
-            )
-        )
 
         //홈배너 어댑터 설정
-        val adapter = HomeBannerAdapter(onClickItem= { position, video ->
-            val intent = Intent(context, VideoDetailActivity::class.java)
-            intent.apply {
-                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
-                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
-            }
-            startActivity(intent)
-        })
-        adapter.list = testData as ArrayList<Video>
-        adapter.notifyDataSetChanged()
-        binding?.rvHomeBanner?.adapter = adapter
+        val adapter = bannerAdapter
+        binding.rvHomeBanner.adapter = adapter
 
+        //섹션 어댑터 1,2 설정
+        val adapter1 = section1Adapter
+        binding.rvHomeSection1.adapter = adapter1
 
-
-        //어댑터 2,3 설정
-        val adapter2 = HomeVideoAdapter(onClickItem= { position, video ->
-            val intent = Intent(context, VideoDetailActivity::class.java)
-            intent.apply {
-                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
-                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
-            }
-            startActivity(intent)
-        })
-        adapter2.list = testData as ArrayList<Video>
-        adapter2.notifyDataSetChanged()
-        binding?.rvHomeSection1?.adapter = adapter2
-
-        val adapter3 = HomeVideoAdapter(onClickItem= { position, video ->
-            val intent = Intent(context, VideoDetailActivity::class.java)
-            intent.apply {
-                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
-                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
-            }
-            startActivity(intent)
-        })
-        adapter3.list = testData as ArrayList<Video>
-        adapter3.notifyDataSetChanged()
-        binding?.rvHomeSection2?.adapter = adapter3
+        val adapter2 = section1Adapter
+        binding.rvHomeSection2.adapter = adapter2
     }
 
     override fun onDestroyView() {
