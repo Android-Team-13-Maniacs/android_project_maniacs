@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.MyVideoFragmentBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
@@ -31,6 +32,7 @@ class MyVideoFragment : Fragment() {
                 putExtra(MY_VIDEO_MODEL,video)
             }
             startActivity(intent)
+            activity?.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out)
         }
     }
 
