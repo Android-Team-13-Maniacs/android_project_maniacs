@@ -15,6 +15,7 @@ import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import android.widget.Button
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
 import com.example.android_teammaniacs_project.search.SearchViewModel
 import com.example.android_teammaniacs_project.search.SearchViewModelFactory
@@ -70,13 +71,11 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         observeViewModel()
-    }
 
         val btnAll = view.findViewById<Button>(R.id.btn_all)
         val btnMusic = view.findViewById<Button>(R.id.btn_music)
         val btnCinema = view.findViewById<Button>(R.id.btn_cinema)
         val btnKpop = view.findViewById<Button>(R.id.btn_kpop)
-
 
         setButtonSelected(btnAll)
 
@@ -99,7 +98,6 @@ class SearchFragment : Fragment() {
             setButtonSelected(btnKpop)
             // TODO: btnKpop 클릭 시 수행할 동작 추가
         }
-
         val searchView = view.findViewById<SearchView>(R.id.et_search)
         searchView.setOnSearchClickListener {
 
@@ -114,8 +112,13 @@ class SearchFragment : Fragment() {
                 return true
             }
         })
+
+
+    }
+
+
     private fun observeViewModel() {
-        viewModel.searchResults.observe(viewLifecycleOwner) {items ->
+        viewModel.searchResults.observe(viewLifecycleOwner) { items ->
             listAdapter.addItems(items)
         }
     }
@@ -125,31 +128,33 @@ class SearchFragment : Fragment() {
         val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         rvVideo.layoutManager = gridManager
 
-        for (i in 1..10) {
-            demoList.add(Video(null, "title$i", null))
-        imgSearch.setOnClickListener {
-            val q = etSearch.text.toString()
-            if (q != "") {
-                listAdapter.clearItems()
-                viewModel.searchView(key, part, maxResults, order, q, type)
-            } else {
-
-            }
-
-        }
-        listAdapter.addItems(demoList)
+//        for (i in 1..10) {
+//            demoList.add(Video(null, "title$i", null))
+//            imgSearch.setOnClickListener {
+//                val q = etSearch.text.toString()
+//                if (q != "") {
+//                    listAdapter.clearItems()
+//                    viewModel.searchView(key, part, maxResults, order, q, type)
+//                } else {
+//
+//                }
+//
+//            }
+//            listAdapter.addItems(demoList)
+//        }
     }
-
 
     private fun setButtonSelected(button: Button) {
 
         selectedButton?.apply {
-            backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.white)
+            backgroundTintList =
+                ContextCompat.getColorStateList(requireContext(), R.color.white)
             isSelected = false
         }
 
 
-        button.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.blue)
+        button.backgroundTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.blue)
         button.isSelected = true
 
 
@@ -160,4 +165,6 @@ class SearchFragment : Fragment() {
         _binding = null
         super.onDestroyView()
     }
+
+
 }
