@@ -2,6 +2,7 @@ package com.example.android_teammaniacs_project.home
 
 import android.R
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,12 +12,42 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
+import com.example.android_teammaniacs_project.detail.VideoDetailActivity
+import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
 
 
 class HomeFragment : Fragment() {
+    companion object {
+        fun newInstance() = HomeFragment()
+        val HOME_VIDEO_POSITION = "home_video_position"
+        val HOME_VIDEO_MODEL = "home_video_model"
+    }
+
+//    private val recyclerViewAdapter by lazy {
+//        HomeBannerAdapter(onClickItem= { position, video ->
+//            val intent = Intent(context, VideoDetailActivity::class.java)
+//            intent.apply {
+//                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
+//                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
+//            }
+//            startActivity(intent)
+//        }
+//        )
+//        HomeVideoAdapter(onClickItem= { position, video ->
+//            val intent = Intent(context, VideoDetailActivity::class.java)
+//            intent.apply {
+//                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
+//                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
+//            }
+//            startActivity(intent)
+//        })
+//    }
+
+
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var contexts: Context
-    private var binding: FragmentHomeBinding? = null
-    private lateinit var adapter: HomeVideoAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -25,14 +56,37 @@ class HomeFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
-        setupRecyclerView()
-        return binding!!.root
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    private fun setupRecyclerView() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //리사이클러뷰에 대한 초기화 필요
+        setupRecyclerView()
+        initView()
+    }
+
+    private fun initView()= with(binding) {
+        //임시 스피너
+        val arraySpinner = arrayOf(
+            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
+        )
+        val s = binding?.homeSpinner
+        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            contexts,
+            R.layout.simple_spinner_item, arraySpinner
+        )
+        spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_item)
+//        adapter.viewre setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+        s?.adapter = spinnerAdapter
+    }
+
+
+    private fun setupRecyclerView()= with(binding) {
+
         //임의로 uri 넣어둠
         val testData = mutableListOf<Video>()
         testData.add(
@@ -57,37 +111,49 @@ class HomeFragment : Fragment() {
             )
         )
 
-        val adapter = HomeBannerAdapter(contexts)
-        adapter.items = testData
+        //홈배너 어댑터 설정
+        val adapter = HomeBannerAdapter(onClickItem= { position, video ->
+            val intent = Intent(context, VideoDetailActivity::class.java)
+            intent.apply {
+                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
+                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
+            }
+            startActivity(intent)
+        })
+        adapter.list = testData as ArrayList<Video>
         adapter.notifyDataSetChanged()
         binding?.rvHomeBanner?.adapter = adapter
 
 
-        //임시 스피너
-        val arraySpinner = arrayOf(
-            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
-        )
-        val s = binding?.homeSpinner
-        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            contexts,
-            R.layout.simple_spinner_item, arraySpinner
-        )
-        spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_item)
-//        adapter.viewre setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-        s?.adapter = spinnerAdapter
 
-        val adapter2 = HomeVideoAdapter(contexts)
-        adapter2.items = testData
+        //어댑터 2,3 설정
+        val adapter2 = HomeVideoAdapter(onClickItem= { position, video ->
+            val intent = Intent(context, VideoDetailActivity::class.java)
+            intent.apply {
+                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
+                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
+            }
+            startActivity(intent)
+        })
+        adapter2.list = testData as ArrayList<Video>
         adapter2.notifyDataSetChanged()
         binding?.rvHomeSection1?.adapter = adapter2
 
-        val adapter3 = HomeVideoAdapter(contexts)
-        adapter3.items = testData
+        val adapter3 = HomeVideoAdapter(onClickItem= { position, video ->
+            val intent = Intent(context, VideoDetailActivity::class.java)
+            intent.apply {
+                putExtra(HomeFragment.HOME_VIDEO_POSITION,position)
+                putExtra(HomeFragment.HOME_VIDEO_MODEL,video)
+            }
+            startActivity(intent)
+        })
+        adapter3.list = testData as ArrayList<Video>
         adapter3.notifyDataSetChanged()
         binding?.rvHomeSection2?.adapter = adapter3
     }
 
-    companion object {
-        fun newInstance() = HomeFragment()
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

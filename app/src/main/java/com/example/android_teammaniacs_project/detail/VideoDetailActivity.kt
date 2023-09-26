@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBinding
+import com.example.android_teammaniacs_project.home.HomeFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
 
 class VideoDetailActivity : AppCompatActivity() {
@@ -21,8 +22,10 @@ class VideoDetailActivity : AppCompatActivity() {
 
         val video = intent.getStringExtra(SearchFragment.VIDEO_MODEL)
         val myvideo = intent.getStringExtra(MyVideoFragment.MY_VIDEO_MODEL)
+        val homevideo = intent.getStringExtra(HomeFragment.HOME_VIDEO_MODEL)
         val position = intent.getIntExtra(SearchFragment.VIDEO_POSITION, -1)
         val myposition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
+        val homeposition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
 
 
         initView()
