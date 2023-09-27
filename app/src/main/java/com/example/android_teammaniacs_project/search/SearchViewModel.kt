@@ -17,7 +17,7 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     val searchResults: LiveData<List<Video>> get() = _searchResults
     var resItems: ArrayList<Video> = ArrayList()
 
-    fun searchView(key: String, part: String, maxResults: Int, order: String, q: String, type: String) {
+    fun searchView(key: String, part: String, maxResults: Int, order: String, q: String?, type: String) {
         apiService.getSearchList(key,part,maxResults, order, q, type)
             ?.enqueue(object : Callback<SearchVideoModel>{
                 override fun onResponse(
@@ -26,7 +26,7 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                 ) {
                     resItems.clear()
                     for(i in response.body()?.items!!) {
-                        resItems.add(Video(null,i.snippet.title,null))
+                        resItems.add(Video(i.snippet.thumbnails.high.url,i.snippet.title,i.snippet.channelId))
                     }
                     _searchResults.value = resItems
                 }

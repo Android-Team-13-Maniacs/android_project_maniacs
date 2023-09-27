@@ -10,12 +10,12 @@ import com.example.android_teammaniacs_project.databinding.VideoItemBinding
 
 class MyVideoAdapter(
     private val onClickItem: (Int, Video) -> Unit,
-) : ListAdapter<Video,MyVideoAdapter.ViewHolder>(
+) : ListAdapter<Video, MyVideoAdapter.ViewHolder>(
     object : DiffUtil.ItemCallback<Video>() {
         override fun areItemsTheSame(
             oldItem: Video, newItem: Video
         ): Boolean {
-            return oldItem.sourceUri == newItem.sourceUri
+            return oldItem.channelId == newItem.channelId
         }
 
         override fun areContentsTheSame(
@@ -28,7 +28,7 @@ class MyVideoAdapter(
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyVideoAdapter.ViewHolder {
         return ViewHolder(
-            VideoItemBinding.inflate(LayoutInflater.from(parent.context),parent,false),
+            VideoItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onClickItem
         )
     }

@@ -51,8 +51,8 @@ class MyVideoFragment : Fragment() {
         initViweModel()
     }
 
-    private fun initViweModel()= with(viewModel) {
-        list.observe(viewLifecycleOwner){
+    private fun initViweModel() = with(viewModel) {
+        list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
         }
     }
