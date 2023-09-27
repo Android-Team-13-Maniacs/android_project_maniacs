@@ -123,6 +123,7 @@ class HomeFragment : Fragment() {
             putExtra(HOME_VIDEO_MODEL, video)
         }
         startActivity(intent)
+        activity?.overridePendingTransition(com.example.android_teammaniacs_project.R.drawable.fade_in, com.example.android_teammaniacs_project.R.drawable.fade_out)
     }
 
 
