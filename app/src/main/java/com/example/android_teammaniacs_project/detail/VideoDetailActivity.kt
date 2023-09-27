@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.R
+import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBinding
 import com.example.android_teammaniacs_project.home.HomeFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
@@ -27,12 +29,49 @@ class VideoDetailActivity : AppCompatActivity() {
         binding = VideoDetailActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val video = intent.getStringExtra(SearchFragment.VIDEO_MODEL)
-        val myvideo = intent.getStringExtra(MyVideoFragment.MY_VIDEO_MODEL)
-        val homevideo = intent.getStringExtra(HomeFragment.HOME_VIDEO_MODEL)
-        val position = intent.getIntExtra(SearchFragment.VIDEO_POSITION, -1)
-        val myposition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
-        val homeposition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
+        val homeVideo = intent.getParcelableExtra<Video>(HomeFragment.HOME_VIDEO_MODEL)
+        val homePosition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
+
+        if (homeVideo != null) {
+            // HomeFragment에서 전달한 데이터가 있는 경우
+            Glide.with(this)
+                .load(homeVideo.image)
+                .into(binding.ivVideo)
+            binding.tvTitle.text = homeVideo.title
+        } else {
+            // HomeFragment에서 전달한 데이터가 없는 경우
+            val searchVideo = intent.getParcelableExtra<Video>(SearchFragment.VIDEO_MODEL)
+            val searchPosition = intent.getIntExtra(SearchFragment.VIDEO_POSITION, -1)
+
+            if (searchVideo != null) {
+                // SearchFragment에서 전달한 데이터가 있는 경우
+                Glide.with(this)
+                    .load(searchVideo.image)
+                    .into(binding.ivVideo)
+                binding.tvTitle.text = searchVideo.title
+            } else {
+                // MyVideoFragment에서 전달한 데이터를 확인
+                val myVideo = intent.getParcelableExtra<Video>(MyVideoFragment.MY_VIDEO_MODEL)
+                val myVideoPosition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
+
+                if (myVideo != null) {
+                    // MyVideoFragment에서 전달한 데이터가 있는 경우
+                    Glide.with(this)
+                        .load(myVideo.image)
+                        .into(binding.ivVideo)
+                    binding.tvTitle.text = myVideo.title
+                } else {
+                }
+            }
+        }
+
+
+//        val video = intent.getStringExtra(SearchFragment.VIDEO_MODEL)
+//        val myvideo = intent.getStringExtra(MyVideoFragment.MY_VIDEO_MODEL)
+//        val homevideo = intent.getStringExtra(HomeFragment.HOME_VIDEO_MODEL)
+//        val position = intent.getIntExtra(SearchFragment.VIDEO_POSITION, -1)
+//        val myposition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
+//        val homeposition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
 
 
         initView()
