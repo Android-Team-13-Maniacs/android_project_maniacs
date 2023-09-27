@@ -1,5 +1,6 @@
 package com.example.android_teammaniacs_project.retrofit
 
+//인기 동영상, 카테고리 별 동영상 API DTO (리턴 값이 같아 같이 사용)
 data class PopularVideoModel(
     val kind: String,
     val etag: String,

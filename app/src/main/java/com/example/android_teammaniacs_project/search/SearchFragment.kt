@@ -47,11 +47,14 @@ class SearchFragment : Fragment() {
     private val demoList = ArrayList<Video>()
     private lateinit var viewModel: SearchViewModel
 
+    //API 연동을 위해 입력할 값들 정의
     private val key = GoogleKey.KEY
     private val part = "snippet"
     private val maxResults = 20
     private var order = "date"
     private val type = "video"
+
+    //button type
     private var buttonType = SearchButtonType.DATE
 
     override fun onAttach(context: Context) {
@@ -75,8 +78,10 @@ class SearchFragment : Fragment() {
         initView()
         observeViewModel()
 
+        //Default Button Selected 세팅
         setButtonSelected(binding.btnDate)
 
+        //Date Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
         binding.btnDate.setOnClickListener {
             order = "date"
             setButtonSelected(binding.btnDate)
@@ -90,7 +95,7 @@ class SearchFragment : Fragment() {
 
             buttonType = SearchButtonType.DATE
         }
-
+        //Rating Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
         binding.btnRating.setOnClickListener {
             order = "rating"
             setButtonSelected(binding.btnRating)
@@ -104,7 +109,7 @@ class SearchFragment : Fragment() {
 
             buttonType = SearchButtonType.RATING
         }
-
+        //Title Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
         binding.btnTitle.setOnClickListener {
             order = "title"
             setButtonSelected(binding.btnTitle)
@@ -118,7 +123,7 @@ class SearchFragment : Fragment() {
 
             buttonType = SearchButtonType.TITLE
         }
-
+        //Count Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
         binding.btnCount.setOnClickListener {
             order = "viewCount"
             setButtonSelected(binding.btnCount)
@@ -133,6 +138,7 @@ class SearchFragment : Fragment() {
             buttonType = SearchButtonType.COUNT
         }
 
+        //SearchView에 값 입력 하고 검색 했을 때 API 호출
         binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 listAdapter.clearItems()

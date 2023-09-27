@@ -1,5 +1,6 @@
 package com.example.android_teammaniacs_project.retrofit
 
+//동영상 검색 API DTO
 data class SearchVideoModel(
     val kind: String,
     val etag: String,

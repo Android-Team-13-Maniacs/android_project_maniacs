@@ -54,6 +54,7 @@ class HomeFragment : Fragment() {
         })
     }
 
+    //API 연동을 위해 입력할 값들 정의
     private val key = GoogleKey.KEY
     private val part = "snippet"
     private val chart = "mostPopular"
@@ -83,6 +84,7 @@ class HomeFragment : Fragment() {
 
     }
 
+    //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
     private fun setBanner() {
         viewModel.setBanner(key, part, chart, maxResults)
         viewModel.getCategory(key, part, regionCode)
@@ -93,6 +95,8 @@ class HomeFragment : Fragment() {
 
 
     }
+
+    //Spinner 세팅 및 Spinner에 Category들 추가 (categories를 list 로 받음)
     private fun setupSpinner(categories: List <CategoryItem>){
 //        val arraySpinner = arrayOf(
 //            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
@@ -126,6 +130,7 @@ class HomeFragment : Fragment() {
         }
     }
 
+    //live data를 받아와서 RecyclerView Adapter에 데이터 전달
     private fun initViewModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             section2Adapter.submitList(it)
