@@ -20,16 +20,17 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     private val _list: MutableLiveData<List<Video>> = MutableLiveData()
     val list: LiveData<List<Video>> get() = _list
 
+    //인기 영상을 위한 LiveData 선언
     private val _popularList: MutableLiveData<List<Video>> = MutableLiveData()
     val popularList: LiveData<List<Video>> get() = _popularList
 
+    //카테고리별 영상을 위한 LiveData 선언
     private val _categoryVideoList: MutableLiveData<List<Video>> = MutableLiveData()
     val categoryVideoList: LiveData<List<Video>> get() = _categoryVideoList
 
+    //카테고리 목록을 받기 위한 LiveData 선언
     private val _categoryList: MutableLiveData<List<CategoryItem>> = MutableLiveData()
     val categoryList: LiveData<List<CategoryItem>> get() = _categoryList
-
-
 
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultList = ArrayList<Video>()
@@ -63,6 +64,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
 //        }
 //    }
 
+    //Popular Video 받는 API 연동 / 받은 후 Video List 에 데이터 추가
     fun setBanner(key: String, part: String, chart: String, maxResults: Int) {
         apiService.getVideoList(key, part, chart, maxResults)
             ?.enqueue(object : Callback<PopularVideoModel> {
@@ -91,6 +93,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
             })
     }
 
+    //카테고리 별 Video 받는 API 연동 / 받은 후 Video List 에 데이터 추가
     fun getCategoryVideo(
         key: String,
         part: String,
@@ -124,6 +127,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
             })
     }
 
+    //카테고리 리스트 받는 API 연동 / 받은 후 List에 데이터 추가
     fun getCategory(key: String, part: String, regionCode: String) {
         apiService.getCategoryList(key, part, regionCode)
             ?.enqueue(object : Callback<CategoryModel> {
