@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +17,7 @@ import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
+import com.example.android_teammaniacs_project.retrofit.CategoryItem
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 
 
@@ -88,17 +90,40 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        //임시 스피너
-        val arraySpinner = arrayOf(
-            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
-        )
-        val s = binding?.homeSpinner
+
+
+    }
+    private fun setupSpinner(categories: List <CategoryItem>){
+//        val arraySpinner = arrayOf(
+//            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
+//        )
+        val arraySpinner = categories.map { it.snippet.title }.toTypedArray()
+        val arraySpinner1 = categories.map { it.id }.toTypedArray()
+
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             contexts,
-            R.layout.simple_spinner_item, arraySpinner
+            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
+            arraySpinner
         )
-        spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_item)
-        s?.adapter = spinnerAdapter
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.homeSpinner.adapter = spinnerAdapter
+
+        // 스피너 아이템 선택 리스너 설정
+        binding.homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCategory = arraySpinner[position]
+
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+
+            }
+        }
     }
 
     private fun initViewModel() = with(viewModel) {
@@ -113,6 +138,9 @@ class HomeFragment : Fragment() {
         categoryVideoList.observe(viewLifecycleOwner) {
             section1Adapter.submitList(it)
             setupRecyclerView()
+        }
+        categoryList.observe(viewLifecycleOwner) {
+            setupSpinner(it)
         }
     }
 
