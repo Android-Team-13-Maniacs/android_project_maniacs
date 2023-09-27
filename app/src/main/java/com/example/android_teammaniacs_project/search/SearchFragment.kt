@@ -72,39 +72,30 @@ class SearchFragment : Fragment() {
         initView()
         observeViewModel()
 
-        val btnAll = view.findViewById<Button>(R.id.btn_all)
-        val btnMusic = view.findViewById<Button>(R.id.btn_music)
-        val btnCinema = view.findViewById<Button>(R.id.btn_cinema)
-        val btnKpop = view.findViewById<Button>(R.id.btn_kpop)
+        setButtonSelected(binding.btnAll)
 
-        setButtonSelected(btnAll)
-
-        btnAll.setOnClickListener {
-            setButtonSelected(btnAll)
-            // TODO: btnAll 클릭 시 수행할 동작 추가
+        binding.btnAll.setOnClickListener {
+            setButtonSelected(binding.btnAll)
         }
 
-        btnMusic.setOnClickListener {
-            setButtonSelected(btnMusic)
-            // TODO: btnMusic 클릭 시 수행할 동작 추가
+        binding.btnMusic.setOnClickListener {
+            setButtonSelected(binding.btnMusic)
         }
 
-        btnCinema.setOnClickListener {
-            setButtonSelected(btnCinema)
-            // TODO: btnCinema 클릭 시 수행할 동작 추가
+        binding.btnCinema.setOnClickListener {
+            setButtonSelected(binding.btnCinema)
         }
 
-        btnKpop.setOnClickListener {
-            setButtonSelected(btnKpop)
-            // TODO: btnKpop 클릭 시 수행할 동작 추가
+        binding.btnKpop.setOnClickListener {
+            setButtonSelected(binding.btnKpop)
         }
-        val searchView = view.findViewById<SearchView>(R.id.et_search)
-        searchView.setOnSearchClickListener {
+        binding.etSearch.setOnSearchClickListener {
 
         }
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.searchView(key, part, maxResults, order, query, type)
                 return true
             }
 
@@ -127,21 +118,6 @@ class SearchFragment : Fragment() {
         rvVideo.adapter = listAdapter
         val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         rvVideo.layoutManager = gridManager
-
-//        for (i in 1..10) {
-//            demoList.add(Video(null, "title$i", null))
-//            imgSearch.setOnClickListener {
-//                val q = etSearch.text.toString()
-//                if (q != "") {
-//                    listAdapter.clearItems()
-//                    viewModel.searchView(key, part, maxResults, order, q, type)
-//                } else {
-//
-//                }
-//
-//            }
-//            listAdapter.addItems(demoList)
-//        }
     }
 
     private fun setButtonSelected(button: Button) {

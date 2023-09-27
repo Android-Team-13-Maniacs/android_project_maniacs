@@ -4,15 +4,19 @@ import android.R
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.android_teammaniacs_project.constants.GoogleKey
+import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
+import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 
 
 class HomeFragment : Fragment() {
@@ -26,31 +30,40 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var contexts: Context
 
-    private val viewModel: HomeViewModel by viewModels { HomeViewModelFactory() }
+    private val apiService = RetrofitClient.apiService
 
+    private val viewModel: HomeViewModel by viewModels { HomeViewModelFactory(apiService) }
 
     private val bannerAdapter by lazy {
-        HomeBannerAdapter(onClickItem= { position, video ->
+        HomeBannerAdapter(onClickItem = { position, video ->
             startVideoDetailActivity(position, video)
         })
     }
 
     private val section1Adapter by lazy {
-        HomeVideoAdapter(onClickItem= { position, video ->
+        HomeVideoAdapter(onClickItem = { position, video ->
             startVideoDetailActivity(position, video)
         })
     }
 
     private val section2Adapter by lazy {
-        HomeVideoAdapter(onClickItem= { position, video ->
+        HomeVideoAdapter(onClickItem = { position, video ->
             startVideoDetailActivity(position, video)
         })
     }
+
+    private val key = GoogleKey.KEY
+    private val part = "snippet"
+    private val chart = "mostPopular"
+    private val maxResults = 20
+    private val videoCategoryId = "1"
+    private val regionCode = "KR"
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         contexts = context
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -64,9 +77,17 @@ class HomeFragment : Fragment() {
         //리사이클러뷰에 대한 초기화 필요
         initView()
         initViewModel()
+        setBanner()
+
     }
 
-    private fun initView()= with(binding) {
+    private fun setBanner() {
+        viewModel.setBanner(key, part, chart, maxResults)
+        viewModel.getCategory(key, part, regionCode)
+        viewModel.getCategoryVideo(key, part, chart, maxResults, videoCategoryId)
+    }
+
+    private fun initView() = with(binding) {
         //임시 스피너
         val arraySpinner = arrayOf(
             "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
@@ -80,11 +101,17 @@ class HomeFragment : Fragment() {
         s?.adapter = spinnerAdapter
     }
 
-    private fun initViewModel()= with(viewModel) {
-        list.observe(viewLifecycleOwner){
-            bannerAdapter.submitList(it)
-            section1Adapter.submitList(it)
+    private fun initViewModel() = with(viewModel) {
+        list.observe(viewLifecycleOwner) {
             section2Adapter.submitList(it)
+            setupRecyclerView()
+        }
+        popularList.observe(viewLifecycleOwner) {
+            bannerAdapter.submitList(it)
+            setupRecyclerView()
+        }
+        categoryVideoList.observe(viewLifecycleOwner) {
+            section1Adapter.submitList(it)
             setupRecyclerView()
         }
     }
@@ -99,8 +126,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun setupRecyclerView()= with(binding) {
-
+    private fun setupRecyclerView() = with(binding) {
 
         //홈배너 어댑터 설정
         val adapter = bannerAdapter

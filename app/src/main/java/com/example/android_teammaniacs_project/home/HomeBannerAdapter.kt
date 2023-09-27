@@ -16,7 +16,7 @@ class HomeBannerAdapter(
         override fun areItemsTheSame(
             oldItem: Video, newItem: Video
         ): Boolean {
-            return oldItem.sourceUri == newItem.sourceUri
+            return oldItem.channelId == newItem.channelId
         }
 
         override fun areContentsTheSame(
@@ -28,9 +28,23 @@ class HomeBannerAdapter(
     }
 ) {
 
+
     var list = ArrayList<Video>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeBannerAdapter.ViewHolder {
+    fun addItems(items: List<Video>) {
+        list.addAll(items)
+        notifyDataSetChanged()
+    }
+
+    fun clearItems() {
+        list.clear()
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): HomeBannerAdapter.ViewHolder {
         return ViewHolder(
             HomeBannerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             onClickItem
@@ -49,7 +63,7 @@ class HomeBannerAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Video) = with(binding) {
-            Glide.with(itemView).load(item.sourceUri)
+            Glide.with(itemView).load(item.image)
 //                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
 //                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
                 .into(ivHomeBanner)

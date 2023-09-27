@@ -17,14 +17,14 @@ class MyVideoViewModel : ViewModel() {
     private val idGenerate = AtomicLong(1L)
 
     init {
-        //test
-        _list.value = arrayListOf<Video>().apply {
-            for (i in 1..10) {
-                add(
-                    Video(null, "title$i", null)
-                )
-            }
-        }
+//        //test
+//        _list.value = arrayListOf<Video>().apply {
+//            for (i in 1..10) {
+//                add(
+//                    Video(null, "title$i", null)
+//                )
+//            }
+//        }
     }
 
 }

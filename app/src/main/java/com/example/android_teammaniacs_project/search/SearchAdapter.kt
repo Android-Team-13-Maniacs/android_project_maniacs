@@ -1,6 +1,7 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.VideoItemBinding
 
@@ -43,7 +44,10 @@ class SearchAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Video) = with(binding) {
             tvItem.text = item.title
-
+            Glide.with(itemView).load(item.image)
+//                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
+//                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
+                .into(ivItem)
             //recyclerview item clicklistener
             video.setOnClickListener {
                 onClickItem(

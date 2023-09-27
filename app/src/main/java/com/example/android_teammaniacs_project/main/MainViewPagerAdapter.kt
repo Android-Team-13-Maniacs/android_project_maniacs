@@ -13,7 +13,7 @@ class MainViewPagerAdapter(
 
     private val fragments = ArrayList<MainTabs>()
 
-//    페이지 생성 관리
+    //    페이지 생성 관리
     init {
         fragments.add(
             MainTabs(HomeFragment.newInstance(), R.string.main_tab_home_title)
@@ -34,7 +34,7 @@ class MainViewPagerAdapter(
     override fun getItemCount(): Int {
         return fragments.size
     }
-    
+
     override fun createFragment(position: Int): Fragment {
         return fragments[position].fragment
     }

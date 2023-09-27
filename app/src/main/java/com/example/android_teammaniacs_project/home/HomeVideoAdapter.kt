@@ -12,21 +12,20 @@ import com.example.android_teammaniacs_project.databinding.VideoItemBinding
 class HomeVideoAdapter(
     private val onClickItem: (Int, Video) -> Unit,
 ) : ListAdapter<Video, HomeVideoAdapter.ViewHolder>(
-object : DiffUtil.ItemCallback<Video>() {
-    override fun areItemsTheSame(
-        oldItem: Video, newItem: Video
-    ): Boolean {
-        return oldItem.sourceUri == newItem.sourceUri
-    }
+    object : DiffUtil.ItemCallback<Video>() {
+        override fun areItemsTheSame(
+            oldItem: Video, newItem: Video
+        ): Boolean {
+            return oldItem.channelId == newItem.channelId
+        }
 
-    override fun areContentsTheSame(
-        oldItem: Video,
-        newItem: Video
-    ): Boolean {
-        return oldItem == newItem
-    }
-})
- {
+        override fun areContentsTheSame(
+            oldItem: Video,
+            newItem: Video
+        ): Boolean {
+            return oldItem == newItem
+        }
+    }) {
 
     var list = ArrayList<Video>()
 
@@ -49,7 +48,7 @@ object : DiffUtil.ItemCallback<Video>() {
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Video) = with(binding) {
-            Glide.with(itemView).load(item.sourceUri)
+            Glide.with(itemView).load(item.image)
 //                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
 //                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
                 .into(ivItem)

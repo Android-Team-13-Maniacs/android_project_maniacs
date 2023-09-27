@@ -25,10 +25,10 @@
     <string name="my_video_fragment_profile_name_demo">프로필 이름</string>
     <string name="my_video_fragment_favorite_title_text">My Favorite Video</string>
     <string name="home_channel_title">Channels by Category</string>
-    <string name="search_category_all_btn">All</string>
-    <string name="search_category_music_btn">Music</string>
-    <string name="search_category_cinema_btn">Cinema</string>
-    <string name="search_category_kpop_btn">Kpop</string>
+    <string name="search_category_date_btn">date</string>
+    <string name="search_category_rating_btn">rating</string>
+    <string name="search_category_title_btn">title</string>
+    <string name="search_category_viewCount_btn">Count</string>
     <string name="detail_like_icon">Like</string>
     <string name="detail_mylist_icon">My List</string>
     <string name="detail_share_icon">Share</string>

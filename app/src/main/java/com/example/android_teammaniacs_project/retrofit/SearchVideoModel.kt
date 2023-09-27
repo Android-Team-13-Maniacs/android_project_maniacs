@@ -1,12 +1,12 @@
 package com.example.android_teammaniacs_project.retrofit
 
 data class SearchVideoModel(
-    val kind : String,
-    val etag : String,
-    val nextPageToken : String,
-    val regionCode : String,
-    val pageInfo : SearchPageInfo,
-    val items : List<SearchItem>
+    val kind: String,
+    val etag: String,
+    val nextPageToken: String,
+    val regionCode: String,
+    val pageInfo: SearchPageInfo,
+    val items: List<SearchItem>
 )
 
 data class SearchItem(
@@ -38,13 +38,13 @@ data class SearchThumbnails(
     val high: SearchDefault
 )
 
-data class SearchDefault (
+data class SearchDefault(
     val url: String,
     val width: Long,
     val height: Long
 )
 
-data class SearchPageInfo (
+data class SearchPageInfo(
     val totalResults: Long,
     val resultsPerPage: Long
 )

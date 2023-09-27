@@ -13,7 +13,10 @@ class CommentListAdapter : RecyclerView.Adapter<CommentListAdapter.ViewHolder>()
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentListAdapter.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): CommentListAdapter.ViewHolder {
         return ViewHolder(
             CommentItemBinding.inflate(
                 LayoutInflater.from(parent.context)
@@ -22,7 +25,7 @@ class CommentListAdapter : RecyclerView.Adapter<CommentListAdapter.ViewHolder>()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item=list[position]
+        val item = list[position]
         holder.bind(item)
     }
 

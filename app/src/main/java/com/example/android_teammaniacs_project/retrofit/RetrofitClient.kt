@@ -10,7 +10,7 @@ object RetrofitClient {
     val apiService: RetrofitInterface
         get() = instance.create(RetrofitInterface::class.java)
 
-    private val instance : Retrofit
+    private val instance: Retrofit
         private get() {
             val gson = GsonBuilder().setLenient().create()
 
