@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Video
+import com.example.android_teammaniacs_project.retrofit.CategoryItem
 import com.example.android_teammaniacs_project.retrofit.CategoryModel
 import com.example.android_teammaniacs_project.retrofit.PopularVideoModel
 import com.example.android_teammaniacs_project.retrofit.RetrofitInterface
@@ -24,6 +25,11 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
 
     private val _categoryVideoList: MutableLiveData<List<Video>> = MutableLiveData()
     val categoryVideoList: LiveData<List<Video>> get() = _categoryVideoList
+
+    private val _categoryList: MutableLiveData<List<CategoryItem>> = MutableLiveData()
+    val categoryList: LiveData<List<CategoryItem>> get() = _categoryList
+
+
 
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultList = ArrayList<Video>()
@@ -128,6 +134,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     for (i in response.body()?.items!!) {
                         Log.d("category", i.snippet.title)
                     }
+                    _categoryList.value = response.body()?.items
                 }
 
                 override fun onFailure(call: Call<CategoryModel>, t: Throwable) {
