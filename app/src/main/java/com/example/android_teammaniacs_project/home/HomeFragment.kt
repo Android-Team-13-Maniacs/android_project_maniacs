@@ -36,6 +36,8 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels { HomeViewModelFactory(apiService) }
 
+    private val categoryToSpinnerList = ArrayList<Category>()
+
     private val bannerAdapter by lazy {
         HomeBannerAdapter(onClickItem = { position, video ->
             startVideoDetailActivity(position, video)
@@ -96,13 +98,9 @@ class HomeFragment : Fragment() {
 
     }
 
-    //Spinner 세팅 및 Spinner에 Category들 추가 (categories를 list 로 받음)
-    private fun setupSpinner(categories: List <CategoryItem>){
-//        val arraySpinner = arrayOf(
-//            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
-//        )
-        val arraySpinner = categories.map { it.snippet.title }.toTypedArray()
-        val arraySpinner1 = categories.map { it.id }.toTypedArray()
+    //Spinner 세팅 및 Spinner에 Category들 추가
+    private fun setupSpinner(){
+        val arraySpinner = categoryToSpinnerList.map {it.title}.toTypedArray()
 
         val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             contexts,
@@ -121,7 +119,11 @@ class HomeFragment : Fragment() {
                 id: Long
             ) {
                 val selectedCategory = arraySpinner[position]
-
+                for(i in categoryToSpinnerList) {
+                    if (selectedCategory == i.title) {
+                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id)
+                    }
+                }
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>) {
@@ -145,7 +147,8 @@ class HomeFragment : Fragment() {
             setupRecyclerView()
         }
         categoryList.observe(viewLifecycleOwner) {
-            setupSpinner(it)
+            categoryToSpinnerList.addAll(it)
+            setupSpinner()
         }
     }
 
