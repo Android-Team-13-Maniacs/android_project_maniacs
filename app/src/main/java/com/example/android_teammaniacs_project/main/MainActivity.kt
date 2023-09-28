@@ -22,8 +22,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() = with(binding) {
-        //view pager adapter
+        //viewpager adapter
         viewPager.adapter = viewPagerAdapter
+        //viewpager slide
+        viewPager.isUserInputEnabled=false
 
 
         // TabLayout x ViewPager2
