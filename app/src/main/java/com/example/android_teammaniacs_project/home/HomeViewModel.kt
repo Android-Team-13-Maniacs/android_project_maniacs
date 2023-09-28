@@ -29,40 +29,14 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     val categoryVideoList: LiveData<List<Video>> get() = _categoryVideoList
 
     //카테고리 목록을 받기 위한 LiveData 선언
-    private val _categoryList: MutableLiveData<List<CategoryItem>> = MutableLiveData()
-    val categoryList: LiveData<List<CategoryItem>> get() = _categoryList
+    private val _categoryList: MutableLiveData<List<Category>> = MutableLiveData()
+    val categoryList: LiveData<List<Category>> get() = _categoryList
 
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultList = ArrayList<Video>()
+    private val categoryResultList = ArrayList<Category>()
 
     private val idGenerate = AtomicLong(1L)
-
-//    init {
-//        //test
-//        _list.value = arrayListOf<Video>().apply {
-//            add(
-//                Video(
-//                    Uri.parse("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F241%2F2022%2F07%2F01%2F0003218781_001_20220701115801485.jpg&type=sc960_832"),
-//                    "STAYC",
-//                    "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F241%2F2022%2F07%2F01%2F0003218781_001_20220701115801485.jpg&type=sc960_832"
-//                )
-//            )
-//            add(
-//                Video(
-//                    Uri.parse("https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.theqoo.net%2Fimg%2FVFgJV.png&type=a340"),
-//                    "NewJeans",
-//                    "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.theqoo.net%2Fimg%2FVFgJV.png&type=a340"
-//                )
-//            )
-//            add(
-//                Video(
-//                    Uri.parse("https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5095%2F2022%2F07%2F09%2F0000974046_001_20220709084001248.jpg&type=sc960_832"),
-//                    "aespa",
-//                    "https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F5095%2F2022%2F07%2F09%2F0000974046_001_20220709084001248.jpg&type=sc960_832"
-//                )
-//            )
-//        }
-//    }
 
     //Popular Video 받는 API 연동 / 받은 후 Video List 에 데이터 추가
     fun setBanner(key: String, part: String, chart: String, maxResults: Int) {
@@ -81,7 +55,6 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                                 i.snippet.channelId
                             )
                         )
-                        Log.d("popular", i.snippet.title)
                     }
                     _popularList.value = popularResultList
                 }
@@ -136,9 +109,17 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     response: Response<CategoryModel>
                 ) {
                     for (i in response.body()?.items!!) {
-                        Log.d("category", i.snippet.title)
+                        if (i.snippet.assignable && i.id != "27" && i.id !="19") {
+                            Log.d("category", i.snippet.title+i.id)
+                            categoryResultList.add(
+                                Category(
+                                    i.id,
+                                    i.snippet.title
+                                )
+                            )
+                        }
                     }
-                    _categoryList.value = response.body()?.items
+                    _categoryList.value = categoryResultList
                 }
 
                 override fun onFailure(call: Call<CategoryModel>, t: Throwable) {
