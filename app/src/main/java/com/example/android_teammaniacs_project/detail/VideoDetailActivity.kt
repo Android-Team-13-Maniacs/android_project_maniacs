@@ -1,24 +1,31 @@
 package com.example.android_teammaniacs_project.detail
 
 import SearchFragment
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.R
+import com.example.android_teammaniacs_project.constants.Constants
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBinding
 import com.example.android_teammaniacs_project.home.HomeFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
+import com.example.android_teammaniacs_project.myVideoPage.MyVideoViewModel
+import com.google.gson.Gson
+import org.json.JSONObject
 
 
 class VideoDetailActivity : AppCompatActivity() {
     private lateinit var binding: VideoDetailActivityBinding
     private var isLiked = false // "Like" 상태를 나타내는 변수
     private var isAdded = false // "My List" 상태를 나타내는 변수
+    private var currentVideo: Video? = null
 
     private val recyclerView by lazy {
         CommentListAdapter()
@@ -34,6 +41,7 @@ class VideoDetailActivity : AppCompatActivity() {
 
         if (homeVideo != null) {
             // HomeFragment에서 전달한 데이터가 있는 경우
+            this.currentVideo = homeVideo
             Glide.with(this)
                 .load(homeVideo.image)
                 .into(binding.ivVideo)
@@ -45,6 +53,7 @@ class VideoDetailActivity : AppCompatActivity() {
 
             if (searchVideo != null) {
                 // SearchFragment에서 전달한 데이터가 있는 경우
+                this.currentVideo = searchVideo
                 Glide.with(this)
                     .load(searchVideo.image)
                     .into(binding.ivVideo)
@@ -56,12 +65,26 @@ class VideoDetailActivity : AppCompatActivity() {
 
                 if (myVideo != null) {
                     // MyVideoFragment에서 전달한 데이터가 있는 경우
+                    this.currentVideo = myVideo
                     Glide.with(this)
                         .load(myVideo.image)
                         .into(binding.ivVideo)
                     binding.tvTitle.text = myVideo.title
                 } else {
                 }
+            }
+        }
+
+        // 현재 비디오가 내 비디오에 저장 되어 있는지 확인
+        if(currentVideo != null) {
+            val sharedPref = this?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
+            val checkIfVideoExist = sharedPref?.getString(currentVideo?.title, null)
+            if(checkIfVideoExist == null) {
+                this.isAdded = false
+                binding.btnAddMylist.isSelected = isAdded
+            } else {
+                this.isAdded = true
+                binding.btnAddMylist.isSelected = isAdded
             }
         }
 
@@ -125,17 +148,42 @@ class VideoDetailActivity : AppCompatActivity() {
             // 토스트 메시지 추가
             val toastMessage = if (isLiked) "좋아요가 눌렸습니다." else "좋아요가 취소되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
-
-
         }
 
 
         binding.btnAddMylist.setOnClickListener {
-            // 상태 변경
-            isAdded = !isAdded
+            // currentVideo가 있는지 검사
+            if (currentVideo == null) {
+                Error("비디오 없음!")
+            }
 
-            // 버튼의 상태에 따라 이미지 변경
-            binding.btnAddMylist.isSelected = isAdded
+            // sharedPreference에 데이터 저장
+            val sharedPref = this@VideoDetailActivity.getSharedPreferences(
+                Constants.MY_VIDEOS_KEY,
+                Context.MODE_PRIVATE
+            )
+            // 기존에 있는 값을 불러옴
+            val checkIfVideoExist = sharedPref.getString(currentVideo?.title, null)
+            if (checkIfVideoExist == null) {
+                // Object to JSON string
+                // 저장이 안되어있는 비디오. 저장 수행
+                with(sharedPref.edit()) {
+                    putString(currentVideo?.title, Gson().toJson(currentVideo))
+                    apply()
+                }
+                isAdded = true
+                binding.btnAddMylist.isSelected = isAdded
+            } else {
+                // 이미 저장되어 있는 비디오. 제거 수행
+                with(sharedPref.edit()) {
+                    remove(currentVideo?.title)
+                    apply()
+                }
+                isAdded = false
+                binding.btnAddMylist.isSelected = isAdded
+            }
+
+
             // 토스트 메시지 추가
             val toastMessage = if (isAdded) "내 목록에 추가되었습니다." else "내 목록에서 삭제되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
