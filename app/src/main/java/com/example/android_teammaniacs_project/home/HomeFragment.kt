@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +17,7 @@ import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
+import com.example.android_teammaniacs_project.retrofit.CategoryItem
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 
 
@@ -52,6 +54,7 @@ class HomeFragment : Fragment() {
         })
     }
 
+    //API 연동을 위해 입력할 값들 정의
     private val key = GoogleKey.KEY
     private val part = "snippet"
     private val chart = "mostPopular"
@@ -81,6 +84,7 @@ class HomeFragment : Fragment() {
 
     }
 
+    //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
     private fun setBanner() {
         viewModel.setBanner(key, part, chart, maxResults)
         viewModel.getCategory(key, part, regionCode)
@@ -88,19 +92,45 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-        //임시 스피너
-        val arraySpinner = arrayOf(
-            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
-        )
-        val s = binding?.homeSpinner
-        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            contexts,
-            R.layout.simple_spinner_item, arraySpinner
-        )
-        spinnerAdapter.setDropDownViewResource(R.layout.simple_spinner_item)
-        s?.adapter = spinnerAdapter
+
+
     }
 
+    //Spinner 세팅 및 Spinner에 Category들 추가 (categories를 list 로 받음)
+    private fun setupSpinner(categories: List <CategoryItem>){
+//        val arraySpinner = arrayOf(
+//            "Gaming", "Sports", "Comedy", "Short Movies", "Entertainment"
+//        )
+        val arraySpinner = categories.map { it.snippet.title }.toTypedArray()
+        val arraySpinner1 = categories.map { it.id }.toTypedArray()
+
+        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            contexts,
+            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
+            arraySpinner
+        )
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.homeSpinner.adapter = spinnerAdapter
+
+        // 스피너 아이템 선택 리스너 설정
+        binding.homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCategory = arraySpinner[position]
+
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+
+            }
+        }
+    }
+
+    //live data를 받아와서 RecyclerView Adapter에 데이터 전달
     private fun initViewModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             section2Adapter.submitList(it)
@@ -114,6 +144,9 @@ class HomeFragment : Fragment() {
             section1Adapter.submitList(it)
             setupRecyclerView()
         }
+        categoryList.observe(viewLifecycleOwner) {
+            setupSpinner(it)
+        }
     }
 
     private fun startVideoDetailActivity(position: Int, video: Video) {
@@ -123,6 +156,7 @@ class HomeFragment : Fragment() {
             putExtra(HOME_VIDEO_MODEL, video)
         }
         startActivity(intent)
+        activity?.overridePendingTransition(com.example.android_teammaniacs_project.R.drawable.fade_in, com.example.android_teammaniacs_project.R.drawable.fade_out)
     }
 
 

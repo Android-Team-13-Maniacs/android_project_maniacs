@@ -17,6 +17,7 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     val searchResults: LiveData<List<Video>> get() = _searchResults
     var resItems: ArrayList<Video> = ArrayList()
 
+    //검색 API 호출 함수
     fun searchView(key: String, part: String, maxResults: Int, order: String, q: String?, type: String) {
         apiService.getSearchList(key,part,maxResults, order, q, type)
             ?.enqueue(object : Callback<SearchVideoModel>{

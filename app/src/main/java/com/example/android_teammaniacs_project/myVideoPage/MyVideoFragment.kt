@@ -1,7 +1,9 @@
 package com.example.android_teammaniacs_project.myVideoPage
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,13 +11,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.android_teammaniacs_project.R
+import com.example.android_teammaniacs_project.constants.Constants
+import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.MyVideoFragmentBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
+import com.google.gson.Gson
 
 class MyVideoFragment : Fragment() {
 
     private var _binding: MyVideoFragmentBinding? = null
     private val binding get() = _binding!!
+    private var context: Context? = null
 
     companion object {
         fun newInstance() = MyVideoFragment()
@@ -37,6 +43,11 @@ class MyVideoFragment : Fragment() {
 
     private val viewModel: MyVideoViewModel by viewModels { MyVidelViewModelFactory() }
 
+    override fun onAttach(_context: Context) {
+        context = _context
+        super.onAttach(_context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -55,6 +66,30 @@ class MyVideoFragment : Fragment() {
         list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
         }
+    }
+
+    override fun onResume() {
+        // 데이터 불러오기
+        //현재는 알파벳순으로 데이터가 불러오고 있음
+        val sharedPref =
+            context?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
+
+        if (sharedPref != null) {
+            val dataList = ArrayList<Video>()
+            for (video in sharedPref.all) {
+                try {
+                    val savedData = sharedPref.getString(video.key, null)
+                    if (savedData != null) {
+                        val data = Gson(). fromJson(savedData, Video::class.java)
+                        dataList.add(data)
+                    }
+                } catch (e: Exception) {
+                    Log.e("MINJI", e.toString())
+                }
+            }
+            viewModel.setData(dataList)
+        }
+        super.onResume()
     }
 
     private fun initView() = with(binding) {

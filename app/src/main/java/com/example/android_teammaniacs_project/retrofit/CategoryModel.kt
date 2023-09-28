@@ -2,6 +2,7 @@ package com.example.android_teammaniacs_project.retrofit
 
 import com.google.gson.annotations.SerializedName
 
+//Category API 리턴 값 DTO
 data class CategoryModel(
     val kind: String,
     val etag: String,
