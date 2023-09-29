@@ -27,6 +27,15 @@ class VideoDetailActivity : AppCompatActivity() {
     private var isAdded = false // "My List" 상태를 나타내는 변수
     private var currentVideo: Video? = null
 
+
+    private val likeSharedPreferences by lazy {
+        getSharedPreferences("LikeVideos", Context.MODE_PRIVATE)
+    }
+
+    private val myVideosSharedPreferences by lazy {
+        getSharedPreferences("MyVideos", Context.MODE_PRIVATE)
+    }
+
     private val recyclerView by lazy {
         CommentListAdapter()
     }
@@ -75,18 +84,24 @@ class VideoDetailActivity : AppCompatActivity() {
             }
         }
 
-        // 현재 비디오가 내 비디오에 저장 되어 있는지 확인
-        if(currentVideo != null) {
-            val sharedPref = this?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
-            val checkIfVideoExist = sharedPref?.getString(currentVideo?.title, null)
-            if(checkIfVideoExist == null) {
+        // 현재 비디오가 내 비디오에 저장되어 있는지 확인
+        if (currentVideo != null) {
+            val checkIfVideoExistInMyVideos = myVideosSharedPreferences.getString(currentVideo?.title, null)
+            if (checkIfVideoExistInMyVideos == null) {
                 this.isAdded = false
                 binding.btnAddMylist.isSelected = isAdded
             } else {
                 this.isAdded = true
                 binding.btnAddMylist.isSelected = isAdded
             }
+
+            val checkIfVideoExistInLikes = likeSharedPreferences.getBoolean(currentVideo?.title, false)
+            this.isLiked = checkIfVideoExistInLikes
+            binding.btnLike.isSelected = isLiked
         }
+
+        initView()
+    }
 
 
 //        val video = intent.getStringExtra(SearchFragment.VIDEO_MODEL)
@@ -96,10 +111,6 @@ class VideoDetailActivity : AppCompatActivity() {
 //        val myposition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
 //        val homeposition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
 
-
-        initView()
-
-    }
 
     private fun initView() = with(binding) {
         //recycler view
@@ -148,8 +159,12 @@ class VideoDetailActivity : AppCompatActivity() {
             // 토스트 메시지 추가
             val toastMessage = if (isLiked) "좋아요가 눌렸습니다." else "좋아요가 취소되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
-        }
 
+            // 좋아요 상태를 SharedPreferences에 저장
+            val editor = likeSharedPreferences.edit()
+            editor.putBoolean(currentVideo?.title, isLiked)
+            editor.apply()
+        }
 
         binding.btnAddMylist.setOnClickListener {
             // currentVideo가 있는지 검사
@@ -158,10 +173,8 @@ class VideoDetailActivity : AppCompatActivity() {
             }
 
             // sharedPreference에 데이터 저장
-            val sharedPref = this@VideoDetailActivity.getSharedPreferences(
-                Constants.MY_VIDEOS_KEY,
-                Context.MODE_PRIVATE
-            )
+            val sharedPref = myVideosSharedPreferences
+
             // 기존에 있는 값을 불러옴
             val checkIfVideoExist = sharedPref.getString(currentVideo?.title, null)
             if (checkIfVideoExist == null) {
@@ -183,18 +196,11 @@ class VideoDetailActivity : AppCompatActivity() {
                 binding.btnAddMylist.isSelected = isAdded
             }
 
-
             // 토스트 메시지 추가
             val toastMessage = if (isAdded) "내 목록에 추가되었습니다." else "내 목록에서 삭제되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
         }
-        val backButton = findViewById<Button>(R.id.btn_back)
-        backButton.setOnClickListener {
-            onBackPressed()
-        }
-
     }
-
 
     override fun onBackPressed() {
         super.onBackPressed()
