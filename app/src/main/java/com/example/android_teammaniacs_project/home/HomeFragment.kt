@@ -109,9 +109,29 @@ class HomeFragment : Fragment() {
         )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.homeSpinner.adapter = spinnerAdapter
+        binding.homeSpinner2.adapter = spinnerAdapter
 
         // 스피너 아이템 선택 리스너 설정
         binding.homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCategory = arraySpinner[position]
+                for(i in categoryToSpinnerList) {
+                    if (selectedCategory == i.title) {
+                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id)
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+
+            }
+        }
+        binding.homeSpinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parentView: AdapterView<*>,
                 selectedItemView: View?,
