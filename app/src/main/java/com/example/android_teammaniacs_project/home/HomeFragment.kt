@@ -1,10 +1,8 @@
 package com.example.android_teammaniacs_project.home
 
-import android.R
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +15,6 @@ import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
-import com.example.android_teammaniacs_project.retrofit.CategoryItem
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 
 
@@ -36,7 +33,8 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels { HomeViewModelFactory(apiService) }
 
-    private val categoryToSpinnerList = ArrayList<Category>()
+    private val categoryToSpinnerUpperList = ArrayList<Category>()
+    private val categoryToSpinnerBelowList = ArrayList<Category>()
 
     private val bannerAdapter by lazy {
         HomeBannerAdapter(onClickItem = { position, video ->
@@ -63,6 +61,7 @@ class HomeFragment : Fragment() {
     private val maxResults = 20
     private val videoCategoryId = "1"
     private val regionCode = "KR"
+    private var viewLocation = "upper"
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,10 +78,9 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //리사이클러뷰에 대한 초기화 필요
-        initView()
         initViewModel()
         setBanner()
+        setupRecyclerView()
 
     }
 
@@ -90,26 +88,29 @@ class HomeFragment : Fragment() {
     private fun setBanner() {
         viewModel.setBanner(key, part, chart, maxResults)
         viewModel.getCategory(key, part, regionCode)
-        viewModel.getCategoryVideo(key, part, chart, maxResults, videoCategoryId)
-    }
-
-    private fun initView() = with(binding) {
-
-
     }
 
     //Spinner 세팅 및 Spinner에 Category들 추가
     private fun setupSpinner(){
-        val arraySpinner = categoryToSpinnerList.map {it.title}.toTypedArray()
+        val arraySpinnerUpper = categoryToSpinnerUpperList.map {it.title}.toTypedArray()
+        val arraySpinnerBelow = categoryToSpinnerBelowList.map {it.title}.toTypedArray()
 
-        val spinnerAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+        val spinnerAdapterUpper: ArrayAdapter<String> = ArrayAdapter<String>(
             contexts,
             com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
-            arraySpinner
+            arraySpinnerUpper
         )
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.homeSpinner.adapter = spinnerAdapter
-        binding.homeSpinner2.adapter = spinnerAdapter
+
+        val spinnerAdapterBelow: ArrayAdapter<String> = ArrayAdapter<String>(
+            contexts,
+            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
+            arraySpinnerBelow
+        )
+        spinnerAdapterUpper.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerAdapterBelow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        binding.homeSpinner.adapter = spinnerAdapterUpper
+        binding.homeSpinner2.adapter = spinnerAdapterBelow
 
         // 스피너 아이템 선택 리스너 설정
         binding.homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -119,10 +120,11 @@ class HomeFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                val selectedCategory = arraySpinner[position]
-                for(i in categoryToSpinnerList) {
+                val selectedCategory = arraySpinnerUpper[position]
+                for(i in categoryToSpinnerUpperList) {
                     if (selectedCategory == i.title) {
-                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id)
+                        viewLocation = "upper"
+                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
                     }
                 }
             }
@@ -138,10 +140,11 @@ class HomeFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                val selectedCategory = arraySpinner[position]
-                for(i in categoryToSpinnerList) {
+                val selectedCategory = arraySpinnerBelow[position]
+                for(i in categoryToSpinnerBelowList) {
                     if (selectedCategory == i.title) {
-                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id)
+                        viewLocation = "below"
+                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
                     }
                 }
             }
@@ -154,20 +157,23 @@ class HomeFragment : Fragment() {
 
     //live data를 받아와서 RecyclerView Adapter에 데이터 전달
     private fun initViewModel() = with(viewModel) {
-        list.observe(viewLifecycleOwner) {
-            section2Adapter.submitList(it)
-            setupRecyclerView()
-        }
         popularList.observe(viewLifecycleOwner) {
             bannerAdapter.submitList(it)
-            setupRecyclerView()
         }
-        categoryVideoList.observe(viewLifecycleOwner) {
+        categoryUpperVideoList.observe(viewLifecycleOwner) {
             section1Adapter.submitList(it)
-            setupRecyclerView()
+            section1Adapter.notifyDataSetChanged()
         }
-        categoryList.observe(viewLifecycleOwner) {
-            categoryToSpinnerList.addAll(it)
+        categoryBelowVideoList.observe(viewLifecycleOwner) {
+            section2Adapter.submitList(it)
+            section2Adapter.notifyDataSetChanged()
+        }
+        categoryListUpper.observe(viewLifecycleOwner) {
+            categoryToSpinnerUpperList.addAll(it)
+            setupSpinner()
+        }
+        categoryListBelow.observe(viewLifecycleOwner) {
+            categoryToSpinnerBelowList.addAll(it)
             setupSpinner()
         }
     }
@@ -193,7 +199,7 @@ class HomeFragment : Fragment() {
         val adapter1 = section1Adapter
         binding.rvHomeSection1.adapter = adapter1
 
-        val adapter2 = section1Adapter
+        val adapter2 = section2Adapter
         binding.rvHomeSection2.adapter = adapter2
     }
 
