@@ -16,26 +16,53 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     private val _searchResults = MutableLiveData<List<Video>>()
     val searchResults: LiveData<List<Video>> get() = _searchResults
     var resItems: ArrayList<Video> = ArrayList()
+    var nextPageTokenClass : String? = ""
 
     //검색 API 호출 함수
-    fun searchView(key: String, part: String, maxResults: Int, order: String, q: String?, type: String) {
-        apiService.getSearchList(key,part,maxResults, order, q, type)
+    fun searchVideo(key: String, part: String, maxResults: Int, order: String, q: String?, type: String) {
+        apiService.getSearchList(key,part,maxResults, order, q, type, null)
             ?.enqueue(object : Callback<SearchVideoModel>{
                 override fun onResponse(
                     call: Call<SearchVideoModel>,
                     response: Response<SearchVideoModel>
                 ) {
                     resItems.clear()
+                    nextPageTokenClass = response.body()?.nextPageToken
+                    Log.d("searchToken", nextPageTokenClass.toString())
                     for(i in response.body()?.items!!) {
                         resItems.add(Video(i.snippet.thumbnails.high.url,i.snippet.title,i.snippet.channelId))
                     }
                     _searchResults.value = resItems
+                    Log.d("returnToken", response.body()?.nextPageToken.toString())
                 }
 
                 override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {
                     Log.d("fail", t.toString())
                 }
 
+            })
+    }
+
+    fun searchVideoScrolled(key : String, part: String, maxResults: Int, order : String, q: String?, type: String) {
+        apiService.getSearchList(key,part,maxResults,order,q,type,nextPageTokenClass)
+            ?.enqueue(object  : Callback<SearchVideoModel>{
+                override fun onResponse(
+                    call: Call<SearchVideoModel>,
+                    response: Response<SearchVideoModel>
+                ) {
+                    resItems.clear()
+                    nextPageTokenClass = response.body()?.nextPageToken
+                    Log.d("scrollToken", nextPageTokenClass.toString())
+                    for (i in response.body()?.items!!) {
+                        resItems.add(Video(i.snippet.thumbnails.high.url, i.snippet.title, i.snippet.channelId))
+                    }
+                    Log.d("nextToken", nextPageTokenClass.toString())
+                    _searchResults.value = resItems
+                }
+
+                override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {
+
+                }
             })
     }
 }
