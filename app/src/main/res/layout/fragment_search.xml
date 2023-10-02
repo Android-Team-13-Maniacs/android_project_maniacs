@@ -8,18 +8,18 @@
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/et_search"
-        android:layout_width="350dp"
-        android:layout_height="51dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/btn_search"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
-    </androidx.appcompat.widget.SearchView>
+        app:layout_constraintTop_toTopOf="parent"></androidx.appcompat.widget.SearchView>
 
 
 
@@ -40,36 +40,36 @@
         android:id="@+id/btn_rating"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/search_category_rating_btn"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="15dp"
         android:backgroundTint="@color/white"
+        android:text="@string/search_category_rating_btn"
         android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_date"
         app:layout_constraintStart_toEndOf="@+id/btn_date"
-        app:layout_constraintTop_toBottomOf="@+id/et_search" />
+        app:layout_constraintTop_toTopOf="@+id/btn_date" />
 
     <Button
         android:id="@+id/btn_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/search_category_title_btn"
-        android:layout_marginStart="12dp"
-        android:textColor="@color/black"
+        android:layout_marginEnd="15dp"
         android:backgroundTint="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/btn_rating"
-        app:layout_constraintTop_toBottomOf="@+id/et_search" />
+        android:text="@string/search_category_title_btn"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_count"
+        app:layout_constraintEnd_toStartOf="@+id/btn_count"
+        app:layout_constraintTop_toTopOf="@+id/btn_count" />
 
     <Button
         android:id="@+id/btn_count"
         android:layout_width="85dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/search_category_viewCount_btn"
-        android:layout_marginStart="12dp"
-        android:textColor="@color/black"
+        android:layout_marginEnd="12dp"
         android:backgroundTint="@color/white"
-        app:layout_constraintStart_toEndOf="@+id/btn_title"
+        android:text="@string/search_category_viewCount_btn"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_search" />
 
     <androidx.recyclerview.widget.RecyclerView
