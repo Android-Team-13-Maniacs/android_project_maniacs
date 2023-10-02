@@ -121,14 +121,23 @@ class VideoDetailActivity : AppCompatActivity() {
             findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
 
         shareButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "video/*"
+//            val intent = Intent(Intent.ACTION_SEND)
+//            intent.type = "video/*"
+//
+//            // String으로 받아서 넣기
+//            val sendMessage = "이렇게 스트링으로 만들어서 넣어주면 됩니다."
+//            intent.putExtra(Intent.EXTRA_TEXT, sendMessage)
+//            val shareIntent = Intent.createChooser(intent, "share")
+//            startActivity(shareIntent)
 
-            // String으로 받아서 넣기
-            val sendMessage = "이렇게 스트링으로 만들어서 넣어주면 됩니다."
+            val videoUrl = currentVideo?.title
+            val sendMessage = videoUrl ?: "비디오 URL을 찾을 수 없습니다."
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, sendMessage)
-            val shareIntent = Intent.createChooser(intent, "share")
+            val shareIntent = Intent.createChooser(intent, "비디오 공유")
             startActivity(shareIntent)
+
         }
 
         binding.btnLike.setOnClickListener {
