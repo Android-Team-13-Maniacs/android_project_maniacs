@@ -16,11 +16,13 @@ import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import android.widget.Button
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.android_teammaniacs_project.constants.SearchButtonType
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
 import com.example.android_teammaniacs_project.search.SearchViewModel
 import com.example.android_teammaniacs_project.search.SearchViewModelFactory
+import kotlin.math.max
 
 class SearchFragment : Fragment() {
 
@@ -46,6 +48,7 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
     private val demoList = ArrayList<Video>()
     private lateinit var viewModel: SearchViewModel
+    private lateinit var gridManager: StaggeredGridLayoutManager
 
     //API 연동을 위해 입력할 값들 정의
     private val key = GoogleKey.KEY
@@ -53,6 +56,7 @@ class SearchFragment : Fragment() {
     private val maxResults = 20
     private var order = "date"
     private val type = "video"
+    private var lastQuery: String? = ""
 
     //button type
     private var buttonType = SearchButtonType.DATE
@@ -85,11 +89,11 @@ class SearchFragment : Fragment() {
         binding.btnDate.setOnClickListener {
             order = "date"
             setButtonSelected(binding.btnDate)
-            val queryInButton = binding.etSearch.query.toString()
+            lastQuery = binding.etSearch.query.toString()
 
-            if(buttonType != SearchButtonType.DATE && queryInButton != "") {
+            if (buttonType != SearchButtonType.DATE && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchView(key, part, maxResults, order, queryInButton, type)
+                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
                 Log.d("button", order)
             }
 
@@ -99,11 +103,11 @@ class SearchFragment : Fragment() {
         binding.btnRating.setOnClickListener {
             order = "rating"
             setButtonSelected(binding.btnRating)
-            val queryInButton = binding.etSearch.query.toString()
+            lastQuery = binding.etSearch.query.toString()
 
-            if(buttonType != SearchButtonType.RATING && queryInButton != "") {
+            if (buttonType != SearchButtonType.RATING && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchView(key, part, maxResults, order, queryInButton, type)
+                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
                 Log.d("button", order)
             }
 
@@ -113,11 +117,11 @@ class SearchFragment : Fragment() {
         binding.btnTitle.setOnClickListener {
             order = "title"
             setButtonSelected(binding.btnTitle)
-            val queryInButton = binding.etSearch.query.toString()
+            lastQuery = binding.etSearch.query.toString()
 
-            if(buttonType != SearchButtonType.TITLE && queryInButton != "") {
+            if (buttonType != SearchButtonType.TITLE && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchView(key, part, maxResults, order, queryInButton, type)
+                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
                 Log.d("button", order)
             }
 
@@ -127,11 +131,11 @@ class SearchFragment : Fragment() {
         binding.btnCount.setOnClickListener {
             order = "viewCount"
             setButtonSelected(binding.btnCount)
-            val queryInButton = binding.etSearch.query.toString()
+            lastQuery = binding.etSearch.query.toString()
 
-            if(buttonType != SearchButtonType.COUNT && queryInButton != "") {
+            if (buttonType != SearchButtonType.COUNT && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchView(key, part, maxResults, order, queryInButton, type)
+                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
                 Log.d("button", order)
             }
 
@@ -142,19 +146,27 @@ class SearchFragment : Fragment() {
         binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 listAdapter.clearItems()
-                when(buttonType) {
+                when (buttonType) {
                     SearchButtonType.DATE -> {
-                        viewModel.searchView(key, part, maxResults, order, query, type)
+                        viewModel.searchVideo(key, part, maxResults, order, query, type)
+                        lastQuery = query
                     }
+
                     SearchButtonType.RATING -> {
-                        viewModel.searchView(key, part, maxResults, order, query, type)
+                        viewModel.searchVideo(key, part, maxResults, order, query, type)
+                        lastQuery = query
                     }
+
                     SearchButtonType.TITLE -> {
-                        viewModel.searchView(key, part, maxResults, order, query, type)
+                        viewModel.searchVideo(key, part, maxResults, order, query, type)
+                        lastQuery = query
                     }
+
                     SearchButtonType.COUNT -> {
-                        viewModel.searchView(key, part, maxResults, order, query, type)
+                        viewModel.searchVideo(key, part, maxResults, order, query, type)
+                        lastQuery = query
                     }
+
                     else -> {
 
                     }
@@ -170,7 +182,6 @@ class SearchFragment : Fragment() {
 
     }
 
-
     private fun observeViewModel() {
         viewModel.searchResults.observe(viewLifecycleOwner) { items ->
             listAdapter.addItems(items)
@@ -179,8 +190,9 @@ class SearchFragment : Fragment() {
 
     private fun initView() = with(binding) {
         rvVideo.adapter = listAdapter
-        val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         rvVideo.layoutManager = gridManager
+        rvVideo.addOnScrollListener(onScrollListener)
     }
 
     private fun setButtonSelected(button: Button) {
@@ -191,11 +203,9 @@ class SearchFragment : Fragment() {
             isSelected = false
         }
 
-
         button.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.blue)
         button.isSelected = true
-
 
         selectedButton = button
     }
@@ -205,5 +215,18 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
     }
 
+    private var onScrollListener: RecyclerView.OnScrollListener =
+        object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val lastItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                val itemTotalCount = recyclerView.adapter!!.itemCount - 1
+                if (lastItemPosition == itemTotalCount) { // 최하단 판별 기준
+                    viewModel.searchVideoScrolled(key,part, maxResults,order,lastQuery,type) // viewModel에서 새로운 페이지의 정보를 추가
+                }
+            }
+        }
 
 }
