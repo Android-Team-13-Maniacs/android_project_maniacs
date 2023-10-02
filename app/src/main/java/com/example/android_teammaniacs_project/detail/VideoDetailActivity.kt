@@ -27,15 +27,6 @@ class VideoDetailActivity : AppCompatActivity() {
     private var isAdded = false // "My List" 상태를 나타내는 변수
     private var currentVideo: Video? = null
 
-
-    private val likeSharedPreferences by lazy {
-        getSharedPreferences("LikeVideos", Context.MODE_PRIVATE)
-    }
-
-    private val myVideosSharedPreferences by lazy {
-        getSharedPreferences("MyVideos", Context.MODE_PRIVATE)
-    }
-
     private val recyclerView by lazy {
         CommentListAdapter()
     }
@@ -79,15 +70,15 @@ class VideoDetailActivity : AppCompatActivity() {
                         .load(myVideo.image)
                         .into(binding.ivVideo)
                     binding.tvTitle.text = myVideo.title
-                } else {
                 }
             }
         }
 
-        // 현재 비디오가 내 비디오에 저장되어 있는지 확인
-        if (currentVideo != null) {
-            val checkIfVideoExistInMyVideos = myVideosSharedPreferences.getString(currentVideo?.title, null)
-            if (checkIfVideoExistInMyVideos == null) {
+        // 현재 비디오가 내 비디오에 저장 되어 있는지 확인
+        if(currentVideo != null) {
+            val sharedPref = this?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
+            val checkIfVideoExist = sharedPref?.getString(currentVideo?.title, null)
+            if(checkIfVideoExist == null) {
                 this.isAdded = false
                 binding.btnAddMylist.isSelected = isAdded
             } else {
@@ -95,22 +86,14 @@ class VideoDetailActivity : AppCompatActivity() {
                 binding.btnAddMylist.isSelected = isAdded
             }
 
-            val checkIfVideoExistInLikes = likeSharedPreferences.getBoolean(currentVideo?.title, false)
-            this.isLiked = checkIfVideoExistInLikes
+            // 좋아요 상태를 가져옴
+            val likeStatus = loadLikeStatusFromSharedPreferences()
+            isLiked = likeStatus
             binding.btnLike.isSelected = isLiked
         }
 
         initView()
     }
-
-
-//        val video = intent.getStringExtra(SearchFragment.VIDEO_MODEL)
-//        val myvideo = intent.getStringExtra(MyVideoFragment.MY_VIDEO_MODEL)
-//        val homevideo = intent.getStringExtra(HomeFragment.HOME_VIDEO_MODEL)
-//        val position = intent.getIntExtra(SearchFragment.VIDEO_POSITION, -1)
-//        val myposition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
-//        val homeposition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
-
 
     private fun initView() = with(binding) {
         //recycler view
@@ -137,7 +120,6 @@ class VideoDetailActivity : AppCompatActivity() {
         val shareButton =
             findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
 
-
         shareButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "video/*"
@@ -161,9 +143,7 @@ class VideoDetailActivity : AppCompatActivity() {
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
 
             // 좋아요 상태를 SharedPreferences에 저장
-            val editor = likeSharedPreferences.edit()
-            editor.putBoolean(currentVideo?.title, isLiked)
-            editor.apply()
+            saveLikeStatusAndVideoInfoToSharedPreferences()
         }
 
         binding.btnAddMylist.setOnClickListener {
@@ -173,8 +153,10 @@ class VideoDetailActivity : AppCompatActivity() {
             }
 
             // sharedPreference에 데이터 저장
-            val sharedPref = myVideosSharedPreferences
-
+            val sharedPref = this@VideoDetailActivity.getSharedPreferences(
+                Constants.MY_VIDEOS_KEY,
+                Context.MODE_PRIVATE
+            )
             // 기존에 있는 값을 불러옴
             val checkIfVideoExist = sharedPref.getString(currentVideo?.title, null)
             if (checkIfVideoExist == null) {
@@ -199,6 +181,37 @@ class VideoDetailActivity : AppCompatActivity() {
             // 토스트 메시지 추가
             val toastMessage = if (isAdded) "내 목록에 추가되었습니다." else "내 목록에서 삭제되었습니다."
             Toast.makeText(this@VideoDetailActivity, toastMessage, Toast.LENGTH_SHORT).show()
+
+            // 좋아요 상태를 SharedPreferences에 저장
+            saveLikeStatusAndVideoInfoToSharedPreferences()
+        }
+
+        val backButton = findViewById<Button>(R.id.btn_back)
+        backButton.setOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    // 좋아요 상태와 비디오 정보를 SharedPreferences에 저장하는 함수
+    private fun saveLikeStatusAndVideoInfoToSharedPreferences() {
+        if (currentVideo != null) {
+            val sharedPref = getSharedPreferences(Constants.LIKED_VIDEOS_KEY, Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putBoolean(currentVideo?.title, isLiked)
+                // 비디오 정보를 JSON 문자열로 저장
+                putString(currentVideo?.title + "_info", Gson().toJson(currentVideo))
+                apply()
+            }
+        }
+    }
+
+    // 좋아요 상태를 SharedPreferences에서 가져오는 함수
+    private fun loadLikeStatusFromSharedPreferences(): Boolean {
+        return if (currentVideo != null) {
+            val sharedPref = getSharedPreferences(Constants.LIKED_VIDEOS_KEY, Context.MODE_PRIVATE)
+            sharedPref.getBoolean(currentVideo?.title, false)
+        } else {
+            false
         }
     }
 

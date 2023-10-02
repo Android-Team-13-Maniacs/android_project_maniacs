@@ -24,7 +24,8 @@ interface RetrofitInterface {
         @Query("maxResults") maxResults: Int,
         @Query("order") order: String,
         @Query("q") q: String?,
-        @Query("type") type: String
+        @Query("type") type: String,
+        @Query("pageToken") pageToken : String?
     ): Call<SearchVideoModel>
 
     //카테고리 별 영상
