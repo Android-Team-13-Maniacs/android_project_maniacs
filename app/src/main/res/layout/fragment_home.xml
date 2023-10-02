@@ -24,14 +24,11 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_home_banner"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
                 tools:listitem="@layout/home_banner_item"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="32dp" />
 
             <Spinner
                 android:layout_marginLeft="10dp"
@@ -65,7 +62,7 @@
                 android:id="@+id/rv_home_section2"
                 tools:listitem="@layout/video_item"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>
