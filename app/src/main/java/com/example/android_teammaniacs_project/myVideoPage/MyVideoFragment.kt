@@ -62,13 +62,18 @@ class MyVideoFragment : Fragment() {
         initViweModel()
     }
 
+    private fun initView() = with(binding) {
+        rvVideo.adapter = listAdapter
+
+    }
+
     private fun initViweModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
         }
     }
 
-    override fun onResume() {
+    override fun onResume()= with(binding) {
         // 데이터 불러오기
         //현재는 알파벳순으로 데이터가 불러오고 있음
         val sharedPref =
@@ -90,12 +95,6 @@ class MyVideoFragment : Fragment() {
             viewModel.setData(dataList)
         }
         super.onResume()
-    }
-
-    private fun initView() = with(binding) {
-        rvVideo.adapter = listAdapter
-        val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        rvVideo.layoutManager = gridManager
     }
 
     override fun onDestroyView() {

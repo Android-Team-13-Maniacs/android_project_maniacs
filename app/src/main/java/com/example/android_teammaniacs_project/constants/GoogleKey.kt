@@ -1,9 +1,7 @@
 package com.example.android_teammaniacs_project.constants
 
 object GoogleKey {
-    const val KEY = "AIzaSyBJapk9W62K1mx0UG_ynUV3dcUqV5wBklc"
-
-    // Second Key "AIzaSyBJapk9W62K1mx0UG_ynUV3dcUqV5wBklc"
-    // First Key "AIzaSyAt61zhZLb8zLb3IFPVCHDpLpYU8oPnWlg"
-
+    const val KEY = "AIzaSyBw3pgTESCvbCOBcTvjLHqglh_xIKcH3uo"
+//    AIzaSyBw3pgTESCvbCOBcTvjLHqglh_xIKcH3uo//영현
+//    AIzaSyC_IgVDT4omPtNVDigyQdL-k9f4qzXMMBo//충환님
 }
