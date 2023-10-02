@@ -17,6 +17,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import android.widget.Button
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.recyclerview.widget.RecyclerView
 import com.example.android_teammaniacs_project.constants.SearchButtonType
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
 import com.example.android_teammaniacs_project.search.SearchViewModel
@@ -181,6 +182,22 @@ class SearchFragment : Fragment() {
         rvVideo.adapter = listAdapter
         val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         rvVideo.layoutManager = gridManager
+
+        //fab button
+        val fabUpArrow = binding.fabTop
+        rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    fabUpArrow.show() // 아래로 스크롤하면 플로팅 버튼 보이기
+                } else {
+                    fabUpArrow.hide() // 위로 스크롤하면 플로팅 버튼 숨기기
+                }
+            }
+        })
+
+        fabUpArrow.setOnClickListener {
+            rvVideo.smoothScrollToPosition(0) // 최상단으로 스크롤
+        }
     }
 
     private fun setButtonSelected(button: Button) {
