@@ -3,6 +3,7 @@ package com.example.android_teammaniacs_project.home
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +11,17 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.constants.GoogleKey
 import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient
+import me.relex.circleindicator.CircleIndicator2
 
 
 class HomeFragment : Fragment() {
@@ -85,11 +91,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView() = with(binding) {
-
-        //홈배너 어댑터 설정
-        val adapter = bannerAdapter
-        rvHomeBanner.adapter = adapter
-
         //섹션 어댑터 1,2 설정
         val adapter1 = section1Adapter
         rvHomeSection1.adapter = adapter1
@@ -122,7 +123,30 @@ class HomeFragment : Fragment() {
     }
 
     //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
-    private fun setBanner() {
+    private fun setBanner()= with(binding) {
+        //홈배너 어댑터 설정
+        val adapter = bannerAdapter
+        rvHomeBanner.adapter = adapter
+        //홈배너 인디케이터 설정
+        val pagerSnapHelper = PagerSnapHelper()
+        pagerSnapHelper.attachToRecyclerView(rvHomeBanner)
+
+        val indicator: CircleIndicator2 = requireView().findViewById(com.example.android_teammaniacs_project.R.id.indicator)
+        indicator.attachToRecyclerView(rvHomeBanner, pagerSnapHelper)
+        adapter.registerAdapterDataObserver(indicator.adapterDataObserver)
+
+        val handler = Handler()
+
+        val scrollRunnable = object : Runnable {
+            override fun run() {
+                val currentPosition = (rvHomeBanner.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                val nextPosition = if (currentPosition < adapter.itemCount - 1) currentPosition + 1 else 0
+                rvHomeBanner.smoothScrollToPosition(nextPosition)
+                handler.postDelayed(this, 3000) // 3초마다 실행
+            }
+        }
+
+        handler.postDelayed(scrollRunnable, 3000) // 초기 실행
         viewModel.setBanner(key, part, chart, maxResults)
         viewModel.getCategory(key, part, regionCode)
     }
@@ -155,7 +179,7 @@ class HomeFragment : Fragment() {
                 parentView: AdapterView<*>,
                 selectedItemView: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 val selectedCategory = arraySpinnerUpper[position]
                 for(i in categoryToSpinnerUpperList) {
@@ -175,7 +199,7 @@ class HomeFragment : Fragment() {
                 parentView: AdapterView<*>,
                 selectedItemView: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 val selectedCategory = arraySpinnerBelow[position]
                 for(i in categoryToSpinnerBelowList) {
