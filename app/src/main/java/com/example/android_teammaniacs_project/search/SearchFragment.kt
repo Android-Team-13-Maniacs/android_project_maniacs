@@ -1,3 +1,4 @@
+import android.accounts.NetworkErrorException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,9 +17,11 @@ import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import android.widget.Button
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android_teammaniacs_project.constants.SearchButtonType
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
+import com.example.android_teammaniacs_project.search.NoResultsException
 import com.example.android_teammaniacs_project.search.SearchViewModel
 import com.example.android_teammaniacs_project.search.SearchViewModelFactory
 import kotlin.math.max
@@ -97,8 +100,12 @@ class SearchFragment : Fragment() {
 
             if (buttonType != SearchButtonType.DATE && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                Log.d("button", order)
+                try {
+                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
+                    Log.d("button", order)
+                } catch (e: Exception) {
+                    handleApiError(e)
+                }
             }
 
             buttonType = SearchButtonType.DATE
@@ -111,8 +118,12 @@ class SearchFragment : Fragment() {
 
             if (buttonType != SearchButtonType.RATING && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                Log.d("button", order)
+                try {
+                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
+                    Log.d("button", order)
+                } catch (e: Exception) {
+                    handleApiError(e)
+                }
             }
 
             buttonType = SearchButtonType.RATING
@@ -125,8 +136,12 @@ class SearchFragment : Fragment() {
 
             if (buttonType != SearchButtonType.TITLE && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                Log.d("button", order)
+                try {
+                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
+                    Log.d("button", order)
+                } catch (e: Exception) {
+                    handleApiError(e)
+                }
             }
 
             buttonType = SearchButtonType.TITLE
@@ -139,46 +154,48 @@ class SearchFragment : Fragment() {
 
             if (buttonType != SearchButtonType.COUNT && lastQuery != "") {
                 listAdapter.clearItems()
-                viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                Log.d("button", order)
+                try {
+                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
+                    Log.d("button", order)
+                } catch (e: Exception) {
+                    handleApiError(e)
+                }
             }
 
             buttonType = SearchButtonType.COUNT
         }
 
+
         //SearchView에 값 입력 하고 검색 했을 때 API 호출
         binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.d("Hyunsik", "message $query")
+                if (query.isNullOrBlank()) {
+                    showToast("검색어를 입력하세요.")
+                    return true
+                }
                 listAdapter.clearItems()
+
                 when (buttonType) {
-                    SearchButtonType.DATE -> {
-                        viewModel.searchVideo(key, part, maxResults, order, query, type)
-                        lastQuery = query
+                    SearchButtonType.DATE, SearchButtonType.RATING,
+                    SearchButtonType.TITLE, SearchButtonType.COUNT -> {
+                        try {
+                            viewModel.searchVideo(key, part, maxResults, order, query, type)
+                            lastQuery = query
+                        } catch (e: Exception) {
+                            handleApiError(e)
+                        }
                     }
-
-                    SearchButtonType.RATING -> {
-                        viewModel.searchVideo(key, part, maxResults, order, query, type)
-                        lastQuery = query
-                    }
-
-                    SearchButtonType.TITLE -> {
-                        viewModel.searchVideo(key, part, maxResults, order, query, type)
-                        lastQuery = query
-                    }
-
-                    SearchButtonType.COUNT -> {
-                        viewModel.searchVideo(key, part, maxResults, order, query, type)
-                        lastQuery = query
-                    }
-
                     else -> {
 
                     }
                 }
-                return true
+
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                // 여기에 필요한 코드 추가 (필요한 경우)
                 return true
             }
         })
@@ -186,12 +203,27 @@ class SearchFragment : Fragment() {
 
     }
 
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleApiError(exception: Exception) {
+        val errorMessage: String = when (exception) {
+            is NetworkErrorException -> "네트워크 오류가 발생했습니다."
+            is NullPointerException -> "Api호출이 제한되었습니다."
+            is NoResultsException -> "검색 결과가 없습니다."
+            else -> "알 수 없는 오류가 발생했습니다."
+        }
+
+        showToast(errorMessage)
+    }
+
+
     private fun observeViewModel() {
         viewModel.searchResults.observe(viewLifecycleOwner) { items ->
-            listAdapter.addItems(items)
-        }
-        viewModel.isLoading.observe(viewLifecycleOwner) {
-            isRequestInProgress = it
+            if (items.isEmpty()) handleApiError(NoResultsException())
+            else
+                listAdapter.addItems(items)
         }
     }
 
@@ -200,23 +232,6 @@ class SearchFragment : Fragment() {
         gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         rvVideo.layoutManager = gridManager
         rvVideo.addOnScrollListener(onScrollListener)
-
-        //fab button
-        val fabUpArrow = binding.fabTop
-        rvVideo.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    fabUpArrow.show() // 아래로 스크롤하면 플로팅 버튼 보이기
-                } else {
-                    fabUpArrow.hide() // 위로 스크롤하면 플로팅 버튼 숨기기
-                }
-            }
-        })
-
-        fabUpArrow.setOnClickListener {
-            rvVideo.smoothScrollToPosition(0) // 최상단으로 스크롤
-        }
-
     }
 
     private fun setButtonSelected(button: Button) {
@@ -256,6 +271,7 @@ class SearchFragment : Fragment() {
                     viewModel.searchVideoScrolled(key,part,maxResults,order,lastQuery,type)
                     isRequestInProgress = false
                 }
+//                isRequestInProgress = true
             }
         }
 
