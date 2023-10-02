@@ -57,6 +57,11 @@ class SearchFragment : Fragment() {
     private var order = "date"
     private val type = "video"
     private var lastQuery: String? = ""
+    private var isRequestInProgress = true
+
+    private var pastVisibleItems = 0
+    private var visibleItemCount = 0
+    private var totalItemCount = 0
 
     //button type
     private var buttonType = SearchButtonType.DATE
@@ -220,14 +225,19 @@ class SearchFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
+                visibleItemCount = gridManager.childCount
+                totalItemCount = gridManager.itemCount
 
-                val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
-                val max = lastVisibleItemPositions.maxOrNull()
-
-                if ((max != null) && (max >= (layoutManager.itemCount - 1))) {
-                    viewModel.searchVideoScrolled(key, part, maxResults, order, lastQuery, type)
+                val firstVisibleItems = gridManager.findFirstVisibleItemPositions(null)
+                if (firstVisibleItems.isNotEmpty()) {
+                    pastVisibleItems = firstVisibleItems[0]
                 }
+
+                if (isRequestInProgress && visibleItemCount + pastVisibleItems >= totalItemCount) {
+                    viewModel.searchVideoScrolled(key,part,maxResults,order,lastQuery,type)
+                    isRequestInProgress = false
+                }
+//                isRequestInProgress = true
             }
         }
 
