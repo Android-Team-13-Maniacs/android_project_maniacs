@@ -8,6 +8,7 @@ import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.HomeBannerItemBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.example.android_teammaniacs_project.R
 
 class HomeBannerAdapter(
     private val onClickItem: (Int, Video) -> Unit,
@@ -27,19 +28,6 @@ class HomeBannerAdapter(
         }
     }
 ) {
-
-
-    var list = ArrayList<Video>()
-
-    fun addItems(items: List<Video>) {
-        list.addAll(items)
-        notifyDataSetChanged()
-    }
-
-    fun clearItems() {
-        list.clear()
-        notifyDataSetChanged()
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -64,8 +52,8 @@ class HomeBannerAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Video) = with(binding) {
             Glide.with(itemView).load(item.image)
-//                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
-//                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
+                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
+                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
                 .into(ivHomeBanner)
             tvHomeBanner.text = item.title
 

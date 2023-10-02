@@ -78,81 +78,24 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         initViewModel()
         setBanner()
-        setupRecyclerView()
 
     }
 
-    //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
-    private fun setBanner() {
-        viewModel.setBanner(key, part, chart, maxResults)
-        viewModel.getCategory(key, part, regionCode)
-    }
+    private fun initView() = with(binding) {
 
-    //Spinner 세팅 및 Spinner에 Category들 추가
-    private fun setupSpinner(){
-        val arraySpinnerUpper = categoryToSpinnerUpperList.map {it.title}.toTypedArray()
-        val arraySpinnerBelow = categoryToSpinnerBelowList.map {it.title}.toTypedArray()
+        //홈배너 어댑터 설정
+        val adapter = bannerAdapter
+        rvHomeBanner.adapter = adapter
 
-        val spinnerAdapterUpper: ArrayAdapter<String> = ArrayAdapter<String>(
-            contexts,
-            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
-            arraySpinnerUpper
-        )
+        //섹션 어댑터 1,2 설정
+        val adapter1 = section1Adapter
+        rvHomeSection1.adapter = adapter1
 
-        val spinnerAdapterBelow: ArrayAdapter<String> = ArrayAdapter<String>(
-            contexts,
-            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
-            arraySpinnerBelow
-        )
-        spinnerAdapterUpper.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerAdapterBelow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        binding.homeSpinner.adapter = spinnerAdapterUpper
-        binding.homeSpinner2.adapter = spinnerAdapterBelow
-
-        // 스피너 아이템 선택 리스너 설정
-        binding.homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>,
-                selectedItemView: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedCategory = arraySpinnerUpper[position]
-                for(i in categoryToSpinnerUpperList) {
-                    if (selectedCategory == i.title) {
-                        viewLocation = "upper"
-                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
-                    }
-                }
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>) {
-
-            }
-        }
-        binding.homeSpinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>,
-                selectedItemView: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selectedCategory = arraySpinnerBelow[position]
-                for(i in categoryToSpinnerBelowList) {
-                    if (selectedCategory == i.title) {
-                        viewLocation = "below"
-                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
-                    }
-                }
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>) {
-
-            }
-        }
+        val adapter2 = section2Adapter
+        rvHomeSection2.adapter = adapter2
     }
 
     //live data를 받아와서 RecyclerView Adapter에 데이터 전달
@@ -178,6 +121,79 @@ class HomeFragment : Fragment() {
         }
     }
 
+    //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
+    private fun setBanner() {
+        viewModel.setBanner(key, part, chart, maxResults)
+        viewModel.getCategory(key, part, regionCode)
+    }
+
+    //Spinner 세팅 및 Spinner에 Category들 추가
+    private fun setupSpinner()= with(binding){
+        val arraySpinnerUpper = categoryToSpinnerUpperList.map {it.title}.toTypedArray()
+        val arraySpinnerBelow = categoryToSpinnerBelowList.map {it.title}.toTypedArray()
+
+        val spinnerAdapterUpper: ArrayAdapter<String> = ArrayAdapter<String>(
+            contexts,
+            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
+            arraySpinnerUpper
+        )
+
+        val spinnerAdapterBelow: ArrayAdapter<String> = ArrayAdapter<String>(
+            contexts,
+            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
+            arraySpinnerBelow
+        )
+        spinnerAdapterUpper.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerAdapterBelow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        homeSpinner.adapter = spinnerAdapterUpper
+        homeSpinner2.adapter = spinnerAdapterBelow
+
+        // 스피너 아이템 선택 리스너 설정
+        homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCategory = arraySpinnerUpper[position]
+                for(i in categoryToSpinnerUpperList) {
+                    if (selectedCategory == i.title) {
+                        viewLocation = "upper"
+                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+
+            }
+        }
+        homeSpinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parentView: AdapterView<*>,
+                selectedItemView: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCategory = arraySpinnerBelow[position]
+                for(i in categoryToSpinnerBelowList) {
+                    if (selectedCategory == i.title) {
+                        viewLocation = "below"
+                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+
+            }
+        }
+    }
+
+
+    //intent adapter
     private fun startVideoDetailActivity(position: Int, video: Video) {
         val intent = Intent(context, VideoDetailActivity::class.java)
         intent.apply {
@@ -188,20 +204,6 @@ class HomeFragment : Fragment() {
         activity?.overridePendingTransition(com.example.android_teammaniacs_project.R.drawable.fade_in, com.example.android_teammaniacs_project.R.drawable.fade_out)
     }
 
-
-    private fun setupRecyclerView() = with(binding) {
-
-        //홈배너 어댑터 설정
-        val adapter = bannerAdapter
-        binding.rvHomeBanner.adapter = adapter
-
-        //섹션 어댑터 1,2 설정
-        val adapter1 = section1Adapter
-        binding.rvHomeSection1.adapter = adapter1
-
-        val adapter2 = section2Adapter
-        binding.rvHomeSection2.adapter = adapter2
-    }
 
     override fun onDestroyView() {
         _binding = null
