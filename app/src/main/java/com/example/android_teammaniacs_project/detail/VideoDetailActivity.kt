@@ -99,6 +99,10 @@ class VideoDetailActivity : AppCompatActivity() {
         //recycler view
         commentList.adapter = recyclerView
 
+        binding.btnBack.setOnClickListener {
+            onBackPressed()
+        }
+
         //test data
         val list = ArrayList<CommentModel>()
         for (i in 0..3) {
