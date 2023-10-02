@@ -18,6 +18,9 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     var resItems: ArrayList<Video> = ArrayList()
     var nextPageTokenClass : String? = ""
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     //검색 API 호출 함수
     fun searchVideo(key: String, part: String, maxResults: Int, order: String, q: String?, type: String) {
         apiService.getSearchList(key,part,maxResults, order, q, type, null)
@@ -58,6 +61,7 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     }
                     Log.d("nextToken", nextPageTokenClass.toString())
                     _searchResults.value = resItems
+                    _isLoading.value = true
                 }
 
                 override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {
