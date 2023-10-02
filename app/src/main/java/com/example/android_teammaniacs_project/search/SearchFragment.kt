@@ -220,11 +220,13 @@ class SearchFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                val lastItemPosition =
-                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
-                val itemTotalCount = recyclerView.adapter!!.itemCount - 1
-                if (lastItemPosition == itemTotalCount) { // 최하단 판별 기준
-                    viewModel.searchVideoScrolled(key,part, maxResults,order,lastQuery,type) // viewModel에서 새로운 페이지의 정보를 추가
+                val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
+
+                val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+                val max = lastVisibleItemPositions.maxOrNull()
+
+                if ((max != null) && (max >= (layoutManager.itemCount - 1))) {
+                    viewModel.searchVideoScrolled(key, part, maxResults, order, lastQuery, type)
                 }
             }
         }
