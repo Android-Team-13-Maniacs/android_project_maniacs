@@ -190,6 +190,9 @@ class SearchFragment : Fragment() {
         viewModel.searchResults.observe(viewLifecycleOwner) { items ->
             listAdapter.addItems(items)
         }
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            isRequestInProgress = it
+        }
     }
 
     private fun initView() = with(binding) {
@@ -253,7 +256,6 @@ class SearchFragment : Fragment() {
                     viewModel.searchVideoScrolled(key,part,maxResults,order,lastQuery,type)
                     isRequestInProgress = false
                 }
-//                isRequestInProgress = true
             }
         }
 
