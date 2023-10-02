@@ -52,8 +52,8 @@ class HomeBannerAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Video) = with(binding) {
             Glide.with(itemView).load(item.image)
-                .placeholder(R.drawable.loding) // 이미지 로딩 중 사진
-                .error(R.drawable.no) // 이미지를 불러오지 못했을 때 사진
+                .placeholder(R.drawable.img_loding) // 이미지 로딩 중 사진
+                .error(R.drawable.img_no) // 이미지를 불러오지 못했을 때 사진
                 .into(ivHomeBanner)
             tvHomeBanner.text = item.title
 
