@@ -1,6 +1,8 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.R
@@ -9,19 +11,18 @@ import com.example.android_teammaniacs_project.databinding.VideoItemBinding
 
 class SearchAdapter(
     private val onClickItem: (Int, Video) -> Unit,
-) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+) : ListAdapter<Video, SearchAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<Video>() {
+        override fun areItemsTheSame(oldItem: Video, newItem: Video): Boolean {
+            return oldItem.description == newItem.description
+        }
 
-    private val list = ArrayList<Video>()
+        override fun areContentsTheSame(oldItem: Video, newItem: Video): Boolean {
+            return oldItem == newItem
+        }
 
-    fun addItems(items: List<Video>) {
-        list.addAll(items)
-        notifyDataSetChanged()
     }
-
-    fun clearItems() {
-        list.clear()
-        notifyDataSetChanged()
-    }
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchAdapter.ViewHolder {
         return ViewHolder(
@@ -31,12 +32,8 @@ class SearchAdapter(
     }
 
     override fun onBindViewHolder(holder: SearchAdapter.ViewHolder, position: Int) {
-        val item = list[position]
+        val item = getItem(position)
         holder.bind(item)
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
     }
 
     class ViewHolder(
