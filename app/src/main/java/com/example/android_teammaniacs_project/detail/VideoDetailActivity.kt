@@ -3,9 +3,7 @@ package com.example.android_teammaniacs_project.detail
 import SearchFragment
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,9 +14,8 @@ import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBinding
 import com.example.android_teammaniacs_project.home.HomeFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
-import com.example.android_teammaniacs_project.myVideoPage.MyVideoViewModel
+import com.example.android_teammaniacs_project.utils.Utils.convertDateFormat
 import com.google.gson.Gson
-import org.json.JSONObject
 
 
 class VideoDetailActivity : AppCompatActivity() {
@@ -46,6 +43,9 @@ class VideoDetailActivity : AppCompatActivity() {
                 .load(homeVideo.image)
                 .into(binding.ivVideo)
             binding.tvTitle.text = homeVideo.title
+            binding.tvDate.text = convertDateFormat(homeVideo.date)
+            binding.tvDescription.text = homeVideo.description
+            binding.tvChannel.text = homeVideo.channelName
         } else {
             // HomeFragment에서 전달한 데이터가 없는 경우
             val searchVideo = intent.getParcelableExtra<Video>(SearchFragment.VIDEO_MODEL)
@@ -58,6 +58,9 @@ class VideoDetailActivity : AppCompatActivity() {
                     .load(searchVideo.image)
                     .into(binding.ivVideo)
                 binding.tvTitle.text = searchVideo.title
+                binding.tvDate.text = convertDateFormat(searchVideo.date)
+                binding.tvDescription.text = searchVideo.description
+                binding.tvChannel.text = searchVideo.channelName
             } else {
                 // MyVideoFragment에서 전달한 데이터를 확인
                 val myVideo = intent.getParcelableExtra<Video>(MyVideoFragment.MY_VIDEO_MODEL)
@@ -70,6 +73,9 @@ class VideoDetailActivity : AppCompatActivity() {
                         .load(myVideo.image)
                         .into(binding.ivVideo)
                     binding.tvTitle.text = myVideo.title
+                    binding.tvDescription.text = myVideo.description
+                    binding.tvChannel.text = myVideo.channelName
+                    binding.tvDate.text = convertDateFormat(myVideo.date)
                 }
             }
         }
@@ -96,8 +102,6 @@ class VideoDetailActivity : AppCompatActivity() {
     }
 
     private fun initView() = with(binding) {
-        //recycler view
-        commentList.adapter = recyclerView
 
         binding.btnBack.setOnClickListener {
             onBackPressed()
