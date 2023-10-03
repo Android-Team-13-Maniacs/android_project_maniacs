@@ -33,7 +33,11 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     nextPageTokenClass = response.body()?.nextPageToken
                     Log.d("searchToken", nextPageTokenClass.toString())
                     for(i in response.body()?.items!!) {
-                        resItems.add(Video(i.snippet.thumbnails.high.url,i.snippet.title,i.snippet.channelId))
+                        resItems.add(Video(i.snippet.thumbnails.high.url,i.snippet.title,
+                            i.snippet.channelId,
+                            i.snippet.publishedAt,
+                            i.snippet.channelTitle,
+                            i.snippet.description))
                     }
                     _searchResults.value = resItems
                     Log.d("returnToken", response.body()?.nextPageToken.toString())
@@ -57,7 +61,11 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     nextPageTokenClass = response.body()?.nextPageToken
                     Log.d("scrollToken", nextPageTokenClass.toString())
                     for (i in response.body()?.items!!) {
-                        resItems.add(Video(i.snippet.thumbnails.high.url, i.snippet.title, i.snippet.channelId))
+                        resItems.add(Video(i.snippet.thumbnails.high.url, i.snippet.title,
+                            i.snippet.channelId,
+                            i.snippet.publishedAt,
+                            i.snippet.channelTitle,
+                            i.snippet.description))
                     }
                     Log.d("nextToken", nextPageTokenClass.toString())
                     _searchResults.value = resItems

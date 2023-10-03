@@ -65,6 +65,7 @@ class HomeFragment : Fragment() {
     private val part = "snippet"
     private val chart = "mostPopular"
     private val maxResults = 20
+    private val maxResultsPopular = 10
     private val videoCategoryId = "1"
     private val regionCode = "KR"
     private var viewLocation = "upper"
@@ -147,7 +148,7 @@ class HomeFragment : Fragment() {
         }
 
         handler.postDelayed(scrollRunnable, 3000) // 초기 실행
-        viewModel.setBanner(key, part, chart, maxResults)
+        viewModel.setBanner(key, part, chart, maxResultsPopular)
         viewModel.getCategory(key, part, regionCode)
     }
 

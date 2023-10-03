@@ -57,7 +57,10 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                             Video(
                                 i.snippet.thumbnails.high.url,
                                 i.snippet.title,
-                                i.snippet.channelId
+                                i.snippet.channelId,
+                                i.snippet.publishedAt,
+                                i.snippet.channelTitle,
+                                i.snippet.description
                             )
                         )
                     }
@@ -93,7 +96,10 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                                 Video(
                                     i.snippet.thumbnails.high.url,
                                     i.snippet.title,
-                                    i.snippet.channelId
+                                    i.snippet.channelId,
+                                    i.snippet.publishedAt,
+                                    i.snippet.channelTitle,
+                                    i.snippet.description
                                 )
                             )
                         }
@@ -108,7 +114,10 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                                 Video(
                                     i.snippet.thumbnails.high.url,
                                     i.snippet.title,
-                                    i.snippet.channelId
+                                    i.snippet.channelId,
+                                    i.snippet.publishedAt,
+                                    i.snippet.channelTitle,
+                                    i.snippet.description
                                 )
                             )
                         }
