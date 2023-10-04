@@ -34,4 +34,5 @@
     <string name="detail_like_icon">Like</string>
     <string name="detail_mylist_icon">My List</string>
     <string name="detail_share_icon">Share</string>
+    <string name="home_channel_tv">Channel</string>
 </resources>

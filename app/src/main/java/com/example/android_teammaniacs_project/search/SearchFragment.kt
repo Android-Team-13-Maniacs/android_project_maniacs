@@ -1,4 +1,3 @@
-import android.accounts.NetworkErrorException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.android_teammaniacs_project.constants.GoogleKey
 import com.example.android_teammaniacs_project.R
-import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.FragmentSearchBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import androidx.appcompat.widget.SearchView
@@ -21,17 +19,15 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android_teammaniacs_project.constants.SearchButtonType
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
-import com.example.android_teammaniacs_project.search.NoResultsException
 import com.example.android_teammaniacs_project.search.SearchViewModel
 import com.example.android_teammaniacs_project.search.SearchViewModelFactory
-import kotlin.math.max
 
 class SearchFragment : Fragment() {
 
     companion object {
         fun newInstance() = SearchFragment()
-        val VIDEO_POSITION = "video_position"
-        val VIDEO_MODEL = "video_model"
+        const val VIDEO_POSITION = "video_position"
+        const val VIDEO_MODEL = "video_model"
     }
 
     private val listAdapter by lazy {
@@ -48,7 +44,7 @@ class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    private val demoList = ArrayList<Video>()
+
     private lateinit var viewModel: SearchViewModel
     private lateinit var gridManager: StaggeredGridLayoutManager
 
@@ -59,27 +55,26 @@ class SearchFragment : Fragment() {
     private var order = "date"
     private val type = "video"
     private var lastQuery: String? = ""
-    private var isRequestInProgress = true
 
+    //Recycler View 하단 판단을 위한 값
     private var pastVisibleItems = 0
     private var visibleItemCount = 0
     private var totalItemCount = 0
+    private var isRequestInProgress = true
 
-    //button type
+    //Category 선택 버튼
     private var buttonType = SearchButtonType.DATE
+    private var selectedButton: Button? = null
 
     override fun onAttach(context: Context) {
-        viewModel =
-            ViewModelProvider(this, SearchViewModelFactory(apiService))[SearchViewModel::class.java]
+        viewModel = ViewModelProvider(this, SearchViewModelFactory(apiService))[SearchViewModel::class.java]
         super.onAttach(context)
     }
-
-    private var selectedButton: Button? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -88,142 +83,29 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         observeViewModel()
-
-        //Default Button Selected 세팅
-        setButtonSelected(binding.btnDate)
-
-        //Date Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
-        binding.btnDate.setOnClickListener {
-            order = "date"
-            setButtonSelected(binding.btnDate)
-            lastQuery = binding.etSearch.query.toString()
-
-            if (buttonType != SearchButtonType.DATE && lastQuery != "") {
-                listAdapter.clearItems()
-                try {
-                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                    Log.d("button", order)
-                } catch (e: Exception) {
-                    handleApiError(e)
-                }
-            }
-
-            buttonType = SearchButtonType.DATE
-        }
-        //Rating Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
-        binding.btnRating.setOnClickListener {
-            order = "rating"
-            setButtonSelected(binding.btnRating)
-            lastQuery = binding.etSearch.query.toString()
-
-            if (buttonType != SearchButtonType.RATING && lastQuery != "") {
-                listAdapter.clearItems()
-                try {
-                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                    Log.d("button", order)
-                } catch (e: Exception) {
-                    handleApiError(e)
-                }
-            }
-
-            buttonType = SearchButtonType.RATING
-        }
-        //Title Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
-        binding.btnTitle.setOnClickListener {
-            order = "title"
-            setButtonSelected(binding.btnTitle)
-            lastQuery = binding.etSearch.query.toString()
-
-            if (buttonType != SearchButtonType.TITLE && lastQuery != "") {
-                listAdapter.clearItems()
-                try {
-                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                    Log.d("button", order)
-                } catch (e: Exception) {
-                    handleApiError(e)
-                }
-            }
-
-            buttonType = SearchButtonType.TITLE
-        }
-        //Count Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
-        binding.btnCount.setOnClickListener {
-            order = "viewCount"
-            setButtonSelected(binding.btnCount)
-            lastQuery = binding.etSearch.query.toString()
-
-            if (buttonType != SearchButtonType.COUNT && lastQuery != "") {
-                listAdapter.clearItems()
-                try {
-                    viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
-                    Log.d("button", order)
-                } catch (e: Exception) {
-                    handleApiError(e)
-                }
-            }
-
-            buttonType = SearchButtonType.COUNT
-        }
-
-
-        //SearchView에 값 입력 하고 검색 했을 때 API 호출
-        binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d("Hyunsik", "message $query")
-                if (query.isNullOrBlank()) {
-                    showToast("검색어를 입력하세요.")
-                    return true
-                }
-                listAdapter.clearItems()
-
-                when (buttonType) {
-                    SearchButtonType.DATE, SearchButtonType.RATING,
-                    SearchButtonType.TITLE, SearchButtonType.COUNT -> {
-                        try {
-                            viewModel.searchVideo(key, part, maxResults, order, query, type)
-                            lastQuery = query
-                        } catch (e: Exception) {
-                            handleApiError(e)
-                        }
-                    }
-                    else -> {
-
-                    }
-                }
-
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // 여기에 필요한 코드 추가 (필요한 경우)
-                return true
-            }
-        })
-
-
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun handleApiError(exception: Exception) {
-        val errorMessage: String = when (exception) {
-            is NetworkErrorException -> "네트워크 오류가 발생했습니다."
-            is NullPointerException -> "Api호출이 제한되었습니다."
-            is NoResultsException -> "검색 결과가 없습니다."
-            else -> "알 수 없는 오류가 발생했습니다."
-        }
-
-        showToast(errorMessage)
-    }
-
-
+    //observe Live Data
     private fun observeViewModel() {
         viewModel.searchResults.observe(viewLifecycleOwner) { items ->
-            if (items.isEmpty()) handleApiError(NoResultsException())
-            else
-                listAdapter.addItems(items)
+            Log.d("sprite", items.toString())
+            if (items.isEmpty()) {
+                // 비디오 목록이 비어 있는 경우 "비디오가 없습니다" 텍스트를 표시
+                binding.tvNoResults.visibility = View.VISIBLE
+            } else {
+                // 비디오 목록이 비어 있지 않은 경우 "비디오가 없습니다" 텍스트를 숨김
+                binding.tvNoResults.visibility = View.GONE
+            }
+
+            listAdapter.submitList(items)
+        }
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            isRequestInProgress = it
+        }
+        viewModel.searchError.observe(viewLifecycleOwner) {
+            if(!it) {
+                Toast.makeText(context,"API 연동 Error 입니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -232,16 +114,52 @@ class SearchFragment : Fragment() {
         gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         rvVideo.layoutManager = gridManager
         rvVideo.addOnScrollListener(onScrollListener)
+
+        //Default Button Selected 세팅
+        setButtonSelected(binding.btnDate)
+
+        fabTop.setOnClickListener {
+            rvVideo.smoothScrollToPosition(0) // 최상단으로 스크롤
+        }
+
+        //Date Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
+        btnDate.setOnClickListener {
+            onClickedCategoryButton("date", btnDate, SearchButtonType.DATE)
+        }
+        //Rating Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
+        btnRating.setOnClickListener {
+            onClickedCategoryButton("rating", btnRating, SearchButtonType.RATING)
+        }
+        //Title Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
+        btnTitle.setOnClickListener {
+            onClickedCategoryButton("title", btnTitle, SearchButtonType.TITLE)
+        }
+        //Count Button 클릭/ order 값 변경, query 값과 전에 눌려있던 버튼 값 확인 후 viewmodel에서 function 호출
+        btnCount.setOnClickListener {
+            onClickedCategoryButton("viewCount", btnCount, SearchButtonType.COUNT)
+        }
+
+        //SearchView에 값 입력 하고 검색 했을 때 API 호출
+        binding.etSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                listAdapter.submitList(null)
+                viewModel.searchVideo(key, part, maxResults, order, query, type)
+                lastQuery = query
+                return true
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
+
     }
 
     private fun setButtonSelected(button: Button) {
-
         selectedButton?.apply {
             backgroundTintList =
                 ContextCompat.getColorStateList(requireContext(), R.color.white)
             isSelected = false
         }
-
         button.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.blue)
         button.isSelected = true
@@ -249,11 +167,25 @@ class SearchFragment : Fragment() {
         selectedButton = button
     }
 
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
+    //Category Button 선택 시 호출되는 함수
+    private fun onClickedCategoryButton(
+        selectedButtonName: String,
+        selectedButton: Button,
+        selectedButtonType: SearchButtonType
+    ) {
+        order = selectedButtonName
+        setButtonSelected(selectedButton)
+        lastQuery = binding.etSearch.query.toString()
+
+        if (buttonType != selectedButtonType && lastQuery != "") {
+            listAdapter.submitList(null)
+            viewModel.searchVideo(key, part, maxResults, order, lastQuery, type)
+        }
+
+        buttonType = selectedButtonType
     }
 
+    //스크롤 될 때
     private var onScrollListener: RecyclerView.OnScrollListener =
         object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -268,11 +200,22 @@ class SearchFragment : Fragment() {
                 }
 
                 if (isRequestInProgress && visibleItemCount + pastVisibleItems >= totalItemCount) {
-                    viewModel.searchVideoScrolled(key,part,maxResults,order,lastQuery,type)
+                    viewModel.searchVideoScrolled(key, part, maxResults, order, lastQuery, type)
                     isRequestInProgress = false
                 }
-//                isRequestInProgress = true
+
+                val fabUpArrow = binding.fabTop
+                if (dy > 0) {
+                    fabUpArrow.show() // 아래로 스크롤하면 플로팅 버튼 보이기
+                } else {
+                    fabUpArrow.hide() // 위로 스크롤하면 플로팅 버튼 숨기기
+                }
             }
         }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 
 }

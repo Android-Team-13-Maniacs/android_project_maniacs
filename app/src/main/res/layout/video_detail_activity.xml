@@ -38,7 +38,7 @@
         android:maxLines="2"
         android:text="[무한도전] 존버당!! 요즘따라 뒷담인 듯 뒷담 아닌 뒷담 같은 너 ~ 앞담인지 헷갈리는 뒷담화 모음집"
         android:textColor="@color/white"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/cv_video"
         app:layout_constraintHorizontal_bias="0.0"
@@ -120,16 +120,63 @@
         app:layout_constraintStart_toStartOf="@+id/btn_Share"
         app:layout_constraintTop_toBottomOf="@+id/btn_Share" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/comment_list"
-        android:layout_width="0dp"
+    <ScrollView
+        android:id="@+id/sv_description"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:listitem="@layout/comment_item"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_mylist">
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:text="영상 설명 / 영상 설명"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_mylist"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_channel"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="10dp"
+        android:src="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back"
+        app:layout_constraintEnd_toStartOf="@+id/tv_channel"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_like" />
+        app:layout_constraintTop_toTopOf="@id/btn_back"
+        app:shapeAppearanceOverlay="@style/RoundedShapeAppearanceOverlay"/>
+
+    <TextView
+        android:id="@+id/tv_channel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="채널명"
+        android:textColor="@color/blue"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iv_channel"
+        app:layout_constraintTop_toTopOf="@id/btn_back" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

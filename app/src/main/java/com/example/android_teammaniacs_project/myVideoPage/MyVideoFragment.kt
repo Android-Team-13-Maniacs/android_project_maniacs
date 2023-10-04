@@ -101,10 +101,23 @@ class MyVideoFragment : Fragment() {
                     Log.e("MINJI", e.toString())
                 }
             }
+
+            // 데이터가 없을 때 "비디오가 없습니다" 텍스트를 표시
+            if (dataList.isEmpty()) {
+                tvNoVideos.visibility = View.VISIBLE
+            } else {
+                tvNoVideos.visibility = View.GONE
+            }
+
             viewModel.setData(dataList)
+        } else {
+            // 데이터가 없을 때 "비디오가 없습니다" 텍스트를 표시
+            tvNoVideos.visibility = View.VISIBLE
         }
+
         super.onResume()
     }
+
 
     private fun showProfileDialog()= with(binding){
         ProfileDialog(
@@ -114,12 +127,6 @@ class MyVideoFragment : Fragment() {
             viewModel.setProfile(newName, newImageUri)
         }.show(parentFragmentManager, "ProfileDialog")
     }
-
-
-
-
-
-
 
     override fun onDestroyView() {
         _binding = null

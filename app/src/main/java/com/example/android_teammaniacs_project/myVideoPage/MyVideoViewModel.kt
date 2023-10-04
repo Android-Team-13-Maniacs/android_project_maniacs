@@ -35,6 +35,7 @@ class MyVideoViewModel : ViewModel() {
         _list.value = data
     }
 
+
     fun setProfile(name: String, imageUri: Uri?) {
         if(imageUri == null){
             return

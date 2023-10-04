@@ -9,4 +9,8 @@ data class Video(
     val image: String,
     val title: String,
     val channelId: String,
+    val date : String,
+    val channelName : String,
+    val description : String
+
 ) : Parcelable
