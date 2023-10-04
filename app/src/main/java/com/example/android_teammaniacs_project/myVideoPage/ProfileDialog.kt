@@ -10,6 +10,7 @@ import com.example.android_teammaniacs_project.databinding.DialogEditBinding
 
 class ProfileDialog(
     context: Context,
+    private val initialName: String?,
     private val okCallback: (String) -> Unit,
 ) : Dialog(context) { // 뷰를 띄워야하므로 Dialog 클래스는 context를 인자로 받는다.
 
@@ -20,10 +21,10 @@ class ProfileDialog(
         // 만들어놓은 dialog_profile.xml 뷰를 띄운다.
         binding = DialogEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initViews()
+        initView()
     }
 
-    private fun initViews() = with(binding) {
+    private fun initView() = with(binding) {
         // 뒤로가기 버튼, 빈 화면 터치를 통해 dialog가 사라지지 않도록
         setCancelable(false)
 
@@ -44,5 +45,7 @@ class ProfileDialog(
         btnCancle.setOnClickListener {
             dismiss()
         }
+        //수정된이름 다이얼로그에 반영
+        initialName?.let { etContent.setText(it) }
     }
 }

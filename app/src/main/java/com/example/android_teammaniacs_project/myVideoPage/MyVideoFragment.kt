@@ -106,11 +106,10 @@ class MyVideoFragment : Fragment() {
 
     // 다이얼로그를 띄우는 코드
     private fun showProfileDialog() {
-        ProfileDialog(requireContext()) { name ->
-            viewModel.setProfile(name)
+        ProfileDialog(requireContext(), viewModel.profileName.value) {
+            viewModel.setProfile(it)
         }.show()
     }
-
 
     override fun onDestroyView() {
         _binding = null
