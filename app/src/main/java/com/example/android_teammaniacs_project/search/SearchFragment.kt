@@ -1,6 +1,7 @@
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,8 +87,16 @@ class SearchFragment : Fragment() {
     //observe Live Data
     private fun observeViewModel() {
         viewModel.searchResults.observe(viewLifecycleOwner) { items ->
+            Log.d("sprite", items.toString())
+            if (items.isEmpty()) {
+                // 비디오 목록이 비어 있는 경우 "비디오가 없습니다" 텍스트를 표시
+                binding.tvNoResults.visibility = View.VISIBLE
+            } else {
+                // 비디오 목록이 비어 있지 않은 경우 "비디오가 없습니다" 텍스트를 숨김
+                binding.tvNoResults.visibility = View.GONE
+            }
+
             listAdapter.submitList(items)
-            listAdapter.notifyDataSetChanged()
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             isRequestInProgress = it
