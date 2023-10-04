@@ -1,51 +1,61 @@
-package com.example.android_teammaniacs_project.myVideoPage
-
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.android_teammaniacs_project.databinding.DialogEditBinding
 
 class ProfileDialog(
     context: Context,
-    private val initialName: String?,
-    private val okCallback: (String) -> Unit,
-) : Dialog(context) { // 뷰를 띄워야하므로 Dialog 클래스는 context를 인자로 받는다.
+    private val editlName: String?,
+    private val editImageUri: Uri?,
+    private val okCallback: (String, Uri?) -> Unit,
+) : Dialog(context) {
 
     private lateinit var binding: DialogEditBinding
+    private var selectedImageUri: Uri? = null
+
+    companion object {
+        const val PICK_IMAGE_REQUEST_CODE = 123
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 만들어놓은 dialog_profile.xml 뷰를 띄운다.
         binding = DialogEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
     }
 
     private fun initView() = with(binding) {
-        // 뒤로가기 버튼, 빈 화면 터치를 통해 dialog가 사라지지 않도록
         setCancelable(false)
-
-        // background를 투명하게 만듦
-        // (중요) Dialog는 내부적으로 뒤에 흰 사각형 배경이 존재하므로, 배경을 투명하게 만들지 않으면
-        // corner radius의 적용이 보이지 않는다.
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        // OK Button 클릭에 대한 Callback 처리. 이 부분은 상황에 따라 자유롭게!
         btnSave.setOnClickListener {
             if (etContent.text.isNullOrBlank()) {
                 Toast.makeText(context, "닉네임을 입력하세요!", Toast.LENGTH_SHORT).show()
             } else {
-                okCallback(etContent.text.toString())
+                okCallback(etContent.text.toString(), selectedImageUri)
                 dismiss()
             }
         }
         btnCancle.setOnClickListener {
             dismiss()
         }
-        //수정된이름 다이얼로그에 반영
-        initialName?.let { etContent.setText(it) }
+            ivProfile.setOnClickListener {
+            Toast.makeText(context, "클릭했습니다!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            (context as? Activity)?.startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE)
+        }
+        editlName?.let { etContent.setText(it) }
+        editImageUri?.let {
+            selectedImageUri = it
+            ivProfile.setImageURI(it)
+        }
     }
 }
