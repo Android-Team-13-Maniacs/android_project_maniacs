@@ -186,6 +186,11 @@ class VideoDetailActivity : AppCompatActivity() {
                 .load(it)
                 .into(binding.ivChannel)
         }
+        viewModel.detailError.observe(this) {
+            if(!it) {
+                Toast.makeText(this,"API 연동 Error 입니다.",Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     // 좋아요 상태와 비디오 정보를 SharedPreferences에 저장하는 함수

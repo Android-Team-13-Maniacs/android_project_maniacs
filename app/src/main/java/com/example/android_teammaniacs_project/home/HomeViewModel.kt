@@ -8,13 +8,13 @@ import com.example.android_teammaniacs_project.data.Category
 import com.example.android_teammaniacs_project.data.Channel
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.retrofit.CategoryModel
-import com.example.android_teammaniacs_project.retrofit.ChannelModel
 import com.example.android_teammaniacs_project.retrofit.PopularVideoModel
 import com.example.android_teammaniacs_project.retrofit.RetrofitInterface
 import com.example.android_teammaniacs_project.retrofit.SearchVideoModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.NullPointerException
 import java.util.concurrent.atomic.AtomicLong
 
 class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
@@ -35,6 +35,10 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     private val _channelList : MutableLiveData<List<Channel>> = MutableLiveData()
     val channelList : LiveData<List<Channel>> get() = _channelList
 
+    //Exception 처리 LiveData
+    private val _homeError : MutableLiveData<Boolean> = MutableLiveData()
+    val homeError : LiveData<Boolean> get() = _homeError
+
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultUpperList = ArrayList<Video>()
     private val categoryResultList = ArrayList<Category>()
@@ -50,21 +54,27 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     call: Call<PopularVideoModel>,
                     response: Response<PopularVideoModel>
                 ) {
-                    popularResultList.clear()
-                    for (i in response.body()?.items!!) {
-                        Log.d("channelid", i.snippet.channelId)
-                        popularResultList.add(
-                            Video(
-                                i.snippet.thumbnails.high.url,
-                                i.snippet.title,
-                                i.snippet.channelId,
-                                i.snippet.publishedAt,
-                                i.snippet.channelTitle,
-                                i.snippet.description
+                    try {
+                        popularResultList.clear()
+                        for (i in response.body()?.items!!) {
+                            Log.d("channelid", i.snippet.channelId)
+                            popularResultList.add(
+                                Video(
+                                    i.snippet.thumbnails.high.url,
+                                    i.snippet.title,
+                                    i.snippet.channelId,
+                                    i.snippet.publishedAt,
+                                    i.snippet.channelTitle,
+                                    i.snippet.description
+                                )
                             )
-                        )
+                        }
+                        _popularList.value = popularResultList
+                    } catch (e:NullPointerException) {
+                        _homeError.value = false
+                        Log.e("Error", e.message.toString())
+                        _homeError.value = true
                     }
-                    _popularList.value = popularResultList
                 }
 
                 override fun onFailure(call: Call<PopularVideoModel>, t: Throwable) {
@@ -89,21 +99,27 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     call: Call<PopularVideoModel>,
                     response: Response<PopularVideoModel>
                 ) {
-                    if(viewLocation == "upper") {
-                        categoryVideoResultUpperList.clear()
-                        for (i in response.body()?.items!!) {
-                            categoryVideoResultUpperList.add(
-                                Video(
-                                    i.snippet.thumbnails.high.url,
-                                    i.snippet.title,
-                                    i.snippet.channelId,
-                                    i.snippet.publishedAt,
-                                    i.snippet.channelTitle,
-                                    i.snippet.description
+                    try {
+                        if (viewLocation == "upper") {
+                            categoryVideoResultUpperList.clear()
+                            for (i in response.body()?.items!!) {
+                                categoryVideoResultUpperList.add(
+                                    Video(
+                                        i.snippet.thumbnails.high.url,
+                                        i.snippet.title,
+                                        i.snippet.channelId,
+                                        i.snippet.publishedAt,
+                                        i.snippet.channelTitle,
+                                        i.snippet.description
+                                    )
                                 )
-                            )
+                            }
+                            _categoryUpperVideoList.value = categoryVideoResultUpperList
                         }
-                        _categoryUpperVideoList.value = categoryVideoResultUpperList
+                    } catch (e:NullPointerException) {
+                        _homeError.value = false
+                        Log.e("Error", e.message.toString())
+                        _homeError.value = true
                     }
 
                 }
@@ -123,17 +139,23 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     call: Call<CategoryModel>,
                     response: Response<CategoryModel>
                 ) {
-                    for (i in response.body()?.items!!) {
-                        if (i.snippet.assignable && i.id != "27" && i.id !="19") {
-                            categoryResultList.add(
-                                Category(
-                                    i.id,
-                                    i.snippet.title
+                    try {
+                        for (i in response.body()?.items!!) {
+                            if (i.snippet.assignable && i.id != "19") {
+                                categoryResultList.add(
+                                    Category(
+                                        i.id,
+                                        i.snippet.title
+                                    )
                                 )
-                            )
+                            }
                         }
+                        _categoryListUpper.value = categoryResultList
+                    } catch (e:NullPointerException) {
+                        _homeError.value = false
+                        Log.e("Error", e.message.toString())
+                        _homeError.value = true
                     }
-                    _categoryListUpper.value = categoryResultList
                 }
 
                 override fun onFailure(call: Call<CategoryModel>, t: Throwable) {
@@ -159,13 +181,19 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     call: Call<SearchVideoModel>,
                     response: Response<SearchVideoModel>
                 ) {
-                    channelResultList.clear()
-                    for(i in response.body()?.items!!) {
-                        channelResultList.add(
-                            Channel(i.snippet.thumbnails.high.url, i.snippet.channelTitle)
-                        )
+                    try {
+                        channelResultList.clear()
+                        for (i in response.body()?.items!!) {
+                            channelResultList.add(
+                                Channel(i.snippet.thumbnails.high.url, i.snippet.channelTitle)
+                            )
+                        }
+                        _channelList.value = channelResultList
+                    } catch (e:NullPointerException) {
+                        _homeError.value = false
+                        Log.e("Error", e.message.toString())
+                        _homeError.value = true
                     }
-                    _channelList.value = channelResultList
                 }
 
                 override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {

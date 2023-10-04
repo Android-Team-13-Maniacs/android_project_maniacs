@@ -12,6 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
+import java.lang.NullPointerException
 
 class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
 
@@ -25,6 +26,8 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     //Scroll 동작을 위한 Boolean Live Data
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
+    private val _searchError : MutableLiveData<Boolean> = MutableLiveData()
+    val searchError : LiveData<Boolean> get() = _searchError
 
     //검색 API 호출 함수
     fun searchVideo(key: String, part: String, maxResults: Int, order: String, q: String?, type: String) {
@@ -34,6 +37,7 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     call: Call<SearchVideoModel>,
                     response: Response<SearchVideoModel>
                 ) {
+                    try {
                         resItems.clear()
                         receivedNextPageToken = response.body()?.nextPageToken
                         Log.d("searchToken", receivedNextPageToken.toString())
@@ -49,7 +53,11 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                             )
                         }
                         _searchResults.value = resItems
-                        Log.d("returnToken", response.body()?.nextPageToken.toString())
+                    } catch (e: NullPointerException) {
+                        _searchError.value = false
+                        Log.e("Error", e.message.toString())
+                        _searchError.value = true
+                    }
                 }
 
                 override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {
@@ -66,18 +74,26 @@ class SearchViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                     call: Call<SearchVideoModel>,
                     response: Response<SearchVideoModel>
                 ) {
-                    receivedNextPageToken = response.body()?.nextPageToken
-                    Log.d("scrollToken", receivedNextPageToken.toString())
-                    for (i in response.body()?.items!!) {
-                        resItems.add(Video(i.snippet.thumbnails.high.url, i.snippet.title,
-                            i.snippet.channelId,
-                            i.snippet.publishedAt,
-                            i.snippet.channelTitle,
-                            i.snippet.description))
+                    try {
+                        receivedNextPageToken = response.body()?.nextPageToken
+                        for (i in response.body()?.items!!) {
+                            resItems.add(
+                                Video(
+                                    i.snippet.thumbnails.high.url, i.snippet.title,
+                                    i.snippet.channelId,
+                                    i.snippet.publishedAt,
+                                    i.snippet.channelTitle,
+                                    i.snippet.description
+                                )
+                            )
+                        }
+                        _searchResults.value = resItems
+                        _isLoading.value = true
+                    } catch (e: NullPointerException) {
+                        _searchError.value = false
+                        Log.e("Error", e.message.toString())
+                        _searchError.value = true
                     }
-                    Log.d("nextToken", receivedNextPageToken.toString())
-                    _searchResults.value = resItems
-                    _isLoading.value = true
                 }
 
                 override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {

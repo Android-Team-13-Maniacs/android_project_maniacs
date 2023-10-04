@@ -15,6 +15,7 @@ import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import android.widget.Button
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android_teammaniacs_project.constants.SearchButtonType
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient.apiService
@@ -100,6 +101,11 @@ class SearchFragment : Fragment() {
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             isRequestInProgress = it
+        }
+        viewModel.searchError.observe(viewLifecycleOwner) {
+            if(!it) {
+                Toast.makeText(context,"API 연동 Error 입니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
