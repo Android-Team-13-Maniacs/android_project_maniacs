@@ -20,15 +20,4 @@ class MyVideoViewModel : ViewModel() {
         _list.value = data
     }
 
-    init {
-//        //test
-//        _list.value = arrayListOf<Video>().apply {
-//            for (i in 1..10) {
-//                add(
-//                    Video(null, "title$i", null)
-//                )
-//            }
-//        }
-    }
-
 }
