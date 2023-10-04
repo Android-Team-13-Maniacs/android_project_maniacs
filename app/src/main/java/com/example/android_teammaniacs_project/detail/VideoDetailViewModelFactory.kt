@@ -2,7 +2,6 @@ package com.example.android_teammaniacs_project.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.android_teammaniacs_project.home.HomeViewModel
 import com.example.android_teammaniacs_project.retrofit.RetrofitInterface
 
 class VideoDetailViewModelFactory(private val apiService: RetrofitInterface) :

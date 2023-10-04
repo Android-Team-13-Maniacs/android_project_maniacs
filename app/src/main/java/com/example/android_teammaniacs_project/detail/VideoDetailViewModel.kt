@@ -1,10 +1,8 @@
 package com.example.android_teammaniacs_project.detail
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.retrofit.ChannelModel
 import com.example.android_teammaniacs_project.retrofit.RetrofitInterface
 import retrofit2.Call
