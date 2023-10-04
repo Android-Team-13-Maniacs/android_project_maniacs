@@ -13,8 +13,8 @@ class MyVideoViewModel : ViewModel() {
     val list: LiveData<ArrayList<Video>> get() = _list
     private val _profileName = MutableLiveData<String>()
     val profileName: LiveData<String> get() = _profileName
-    private val _profileImageUri = MutableLiveData<Uri?>() // 프로필 이미지 Uri를 저장하는 LiveData
 
+    private val _profileImageUri = MutableLiveData<Uri?>() // 프로필 이미지 Uri를 저장하는 LiveData
     val profileImageUri: LiveData<Uri?> get() = _profileImageUri // 외부에서 프로필 이미지 Uri에 접근하는 LiveData
 
 
@@ -36,6 +36,9 @@ class MyVideoViewModel : ViewModel() {
     }
 
     fun setProfile(name: String, imageUri: Uri?) {
+        if(imageUri == null){
+            return
+        }
         _profileName.value = name
         _profileImageUri.value = imageUri
 //        sharedPreferences.edit().putString("profileName", name).apply()

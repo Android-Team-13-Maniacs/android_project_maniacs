@@ -1,16 +1,14 @@
 package com.example.android_teammaniacs_project.myVideoPage
 
-import ProfileDialog
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.constants.Constants
@@ -70,21 +68,23 @@ class MyVideoFragment : Fragment() {
         btnEdit.setOnClickListener {
             showProfileDialog()
         }
-
     }
 
     private fun initViweModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
         }
-        profileName.observe(viewLifecycleOwner){name ->
-            binding.tvProfileName.text=name
+        profileName.observe(viewLifecycleOwner) { name ->
+            binding.tvProfileName.text = name
+        }
+        profileImageUri.observe(viewLifecycleOwner) {uri ->
+            binding.ivProfile.setImageURI(uri)
         }
     }
 
-    override fun onResume()= with(binding) {
+    override fun onResume() = with(binding) {
         // 데이터 불러오기
-        //현재는 알파벳순으로 데이터가 불러오고 있음
+        // 현재는 알파벳순으로 데이터가 불러오고 있음
         val sharedPref =
             context?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
 
@@ -94,7 +94,7 @@ class MyVideoFragment : Fragment() {
                 try {
                     val savedData = sharedPref.getString(video.key, null)
                     if (savedData != null) {
-                        val data = Gson(). fromJson(savedData, Video::class.java)
+                        val data = Gson().fromJson(savedData, Video::class.java)
                         dataList.add(data)
                     }
                 } catch (e: Exception) {
@@ -106,32 +106,18 @@ class MyVideoFragment : Fragment() {
         super.onResume()
     }
 
-    //선택한 사진 불러오기
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        Log.d("MyVideoFragment", "onActivityResult - requestCode: $requestCode, resultCode: $resultCode")
-
-        if (requestCode == ProfileDialog.PICK_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = data?.data
-            Log.d("MyVideoFragment", "Selected Image Uri: $imageUri")
-
-            viewModel.setProfileImage(imageUri)
-            binding.ivProfile.setImageURI(imageUri)
-        }
-    }
-
-
-    // 다이얼로그를 띄우는 코드
-    private fun showProfileDialog() {
+    private fun showProfileDialog()= with(binding){
         ProfileDialog(
-            requireContext(),
-            viewModel.profileName.value, // 현재 프로필 이름을 전달
-            viewModel.profileImageUri.value // 현재 프로필 이미지 Uri를 전달
+            viewModel.profileName.value,
+            viewModel.profileImageUri.value as? Uri
         ) { newName, newImageUri ->
-            viewModel.setProfile(newName, newImageUri) // 뷰모델에 업데이트 요청
-        }.show()
+            viewModel.setProfile(newName, newImageUri)
+        }.show(parentFragmentManager, "ProfileDialog")
     }
+
+
+
+
 
 
 
