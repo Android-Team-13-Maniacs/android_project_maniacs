@@ -77,7 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="채널"
+                android:text="@string/home_channel_tv"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />

@@ -5,10 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android_teammaniacs_project.data.Category
+import com.example.android_teammaniacs_project.data.Channel
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.retrofit.CategoryModel
+import com.example.android_teammaniacs_project.retrofit.ChannelModel
 import com.example.android_teammaniacs_project.retrofit.PopularVideoModel
 import com.example.android_teammaniacs_project.retrofit.RetrofitInterface
+import com.example.android_teammaniacs_project.retrofit.SearchVideoModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,13 +38,18 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     val categoryListBelow: LiveData<List<Category>> get() = _categoryListBelow
 
     //채널 아이디 수집을 위한 LiveData 선언
-    private val _channelId : MutableLiveData<String> = MutableLiveData()
-    val channelId : LiveData<String> get() = _channelId
+    private val _channelId : MutableLiveData<List<String>> = MutableLiveData()
+    val channelId : LiveData<List<String>> get() = _channelId
+
+    //채널 데이터 전송을 위한 LiveData
+    private val _channelList : MutableLiveData<List<Channel>> = MutableLiveData()
+    val channelList : LiveData<List<Channel>> get() = _channelList
 
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultUpperList = ArrayList<Video>()
-    private val categoryVideoResultBelowList = ArrayList<Video>()
     private val categoryResultList = ArrayList<Category>()
+    private val channelIdArray = ArrayList<String>()
+    private val channelResultList = ArrayList<Channel>()
 
     private val idGenerate = AtomicLong(1L)
 
@@ -94,6 +102,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                 ) {
                     if(viewLocation == "upper") {
                         categoryVideoResultUpperList.clear()
+                        channelIdArray.clear()
                         for (i in response.body()?.items!!) {
                             categoryVideoResultUpperList.add(
                                 Video(
@@ -105,28 +114,12 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                                     i.snippet.description
                                 )
                             )
+                            channelIdArray.add(i.snippet.channelId)
                         }
-                        Log.d("upper", "upper")
                         _categoryUpperVideoList.value = categoryVideoResultUpperList
+                        _channelId.value = channelIdArray
                     }
 
-                    else if(viewLocation == "below") {
-                        categoryVideoResultBelowList.clear()
-                        for (i in response.body()?.items!!) {
-                            categoryVideoResultBelowList.add(
-                                Video(
-                                    i.snippet.thumbnails.high.url,
-                                    i.snippet.title,
-                                    i.snippet.channelId,
-                                    i.snippet.publishedAt,
-                                    i.snippet.channelTitle,
-                                    i.snippet.description
-                                )
-                            )
-                        }
-                        Log.d("below", "below")
-                        _categoryBelowVideoList.value = categoryVideoResultBelowList
-                    }
                 }
 
                 override fun onFailure(call: Call<PopularVideoModel>, t: Throwable) {
@@ -163,5 +156,37 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
 
             })
     }
+
+    fun getChannel(
+        key: String,
+        part: String,
+        maxResults: Int,
+        order: String,
+        selectedCategory: String,
+        regionCode: String,
+        type: String
+    ) {
+        apiService.getChannelList(key,part,maxResults,order,selectedCategory,regionCode,type)
+            ?.enqueue(object : Callback<SearchVideoModel>{
+                override fun onResponse(
+                    call: Call<SearchVideoModel>,
+                    response: Response<SearchVideoModel>
+                ) {
+                    channelResultList.clear()
+                    for(i in response.body()?.items!!) {
+                        channelResultList.add(
+                            Channel(i.snippet.thumbnails.high.url, i.snippet.channelTitle)
+                        )
+                    }
+                    _channelList.value = channelResultList
+                }
+
+                override fun onFailure(call: Call<SearchVideoModel>, t: Throwable) {
+
+                }
+
+            })
+    }
+
 
 }

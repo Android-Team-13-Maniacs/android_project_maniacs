@@ -54,4 +54,16 @@ interface RetrofitInterface {
         @Query("id") id : String,
         @Query("maxResults") maxResults : Int
     ) : Call<ChannelModel>
+
+    //채널 검색
+    @GET("youtube/v3/search")
+    fun getChannelList(
+        @Query("key") key: String,
+        @Query("part") part: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("order") order: String,
+        @Query("q") q: String?,
+        @Query("regionCode") regionCode : String,
+        @Query("type") type: String,
+    ): Call<SearchVideoModel>
 }

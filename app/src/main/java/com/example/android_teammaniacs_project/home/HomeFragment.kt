@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.constants.GoogleKey
 import com.example.android_teammaniacs_project.data.Category
@@ -22,6 +22,7 @@ import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 import me.relex.circleindicator.CircleIndicator2
+import java.lang.StringBuilder
 
 
 class HomeFragment : Fragment() {
@@ -40,7 +41,6 @@ class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels { HomeViewModelFactory(apiService) }
 
     private val categoryToSpinnerUpperList = ArrayList<Category>()
-    private val categoryToSpinnerBelowList = ArrayList<Category>()
 
     private val bannerAdapter by lazy {
         HomeBannerAdapter(onClickItem = { position, video ->
@@ -64,9 +64,12 @@ class HomeFragment : Fragment() {
     private val chart = "mostPopular"
     private val maxResults = 20
     private val maxResultsPopular = 10
-    private val videoCategoryId = "1"
     private val regionCode = "KR"
     private var viewLocation = "upper"
+    private val order = "viewCount"
+    private val type = "channel"
+
+    private var channelIdAppend : String = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -111,7 +114,10 @@ class HomeFragment : Fragment() {
             categoryToSpinnerUpperList.addAll(it)
             setupSpinner()
         }
-
+        channelList.observe(viewLifecycleOwner) {
+            section2Adapter.submitList(it)
+            section2Adapter.notifyDataSetChanged()
+        }
     }
 
     //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
@@ -172,6 +178,7 @@ class HomeFragment : Fragment() {
                         viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
                     }
                 }
+                viewModel.getChannel(key,part,maxResults,order,selectedCategory,regionCode,type)
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>) {
@@ -180,7 +187,6 @@ class HomeFragment : Fragment() {
         }
 
     }
-
 
     //intent adapter
     private fun startVideoDetailActivity(position: Int, video: Video) {
