@@ -65,11 +65,18 @@ class MyVideoFragment : Fragment() {
     private fun initView() = with(binding) {
         rvVideo.adapter = listAdapter
 
+        btnEdit.setOnClickListener {
+            showProfileDialog()
+        }
+
     }
 
     private fun initViweModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
+        }
+        profileName.observe(viewLifecycleOwner){name ->
+            binding.tvProfileName.text=name
         }
     }
 
@@ -96,6 +103,14 @@ class MyVideoFragment : Fragment() {
         }
         super.onResume()
     }
+
+    // 다이얼로그를 띄우는 코드
+    private fun showProfileDialog() {
+        ProfileDialog(requireContext()) { name ->
+            viewModel.setProfile(name)
+        }.show()
+    }
+
 
     override fun onDestroyView() {
         _binding = null
