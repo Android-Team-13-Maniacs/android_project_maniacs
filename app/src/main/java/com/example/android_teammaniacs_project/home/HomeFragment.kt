@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import com.example.android_teammaniacs_project.databinding.FragmentHomeBinding
 import com.example.android_teammaniacs_project.detail.VideoDetailActivity
 import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 import me.relex.circleindicator.CircleIndicator2
-import java.lang.StringBuilder
 
 
 class HomeFragment : Fragment() {
@@ -48,13 +46,13 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private val section1Adapter by lazy {
+    private val categoryVideoAdapter by lazy {
         HomeVideoAdapter(onClickItem = { position, video ->
             startVideoDetailActivity(position, video)
         })
     }
 
-    private val section2Adapter by lazy {
+    private val categoryChannelAdapter by lazy {
         HomeChannelAdapter()
     }
 
@@ -69,7 +67,6 @@ class HomeFragment : Fragment() {
     private val order = "viewCount"
     private val type = "channel"
 
-    private var channelIdAppend : String = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -94,11 +91,8 @@ class HomeFragment : Fragment() {
 
     private fun initView() = with(binding) {
         //섹션 어댑터 1,2 설정
-        val adapter1 = section1Adapter
-        rvHomeSection1.adapter = adapter1
-
-        val adapter2 = section2Adapter
-        rvHomeSection2.adapter = adapter2
+        rvHomeSection1.adapter = categoryVideoAdapter
+        rvHomeSection2.adapter = categoryChannelAdapter
     }
 
     //live data를 받아와서 RecyclerView Adapter에 데이터 전달
@@ -107,16 +101,16 @@ class HomeFragment : Fragment() {
             bannerAdapter.submitList(it)
         }
         categoryUpperVideoList.observe(viewLifecycleOwner) {
-            section1Adapter.submitList(it)
-            section1Adapter.notifyDataSetChanged()
+            categoryVideoAdapter.submitList(it)
+            categoryVideoAdapter.notifyDataSetChanged()
         }
         categoryListUpper.observe(viewLifecycleOwner) {
             categoryToSpinnerUpperList.addAll(it)
             setupSpinner()
         }
         channelList.observe(viewLifecycleOwner) {
-            section2Adapter.submitList(it)
-            section2Adapter.notifyDataSetChanged()
+            categoryChannelAdapter.submitList(it)
+            categoryChannelAdapter.notifyDataSetChanged()
         }
     }
 
@@ -145,6 +139,8 @@ class HomeFragment : Fragment() {
         }
 
         handler.postDelayed(scrollRunnable, 3000) // 초기 실행
+
+        //Banner Setting 및 Category Setting
         viewModel.setBanner(key, part, chart, maxResultsPopular)
         viewModel.getCategory(key, part, regionCode)
     }
@@ -172,12 +168,15 @@ class HomeFragment : Fragment() {
                 id: Long,
             ) {
                 val selectedCategory = arraySpinnerUpper[position]
+                //카테고리 별 영상
                 for(i in categoryToSpinnerUpperList) {
                     if (selectedCategory == i.title) {
                         viewLocation = "upper"
                         viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
                     }
                 }
+
+                //카테고리 별 채널
                 viewModel.getChannel(key,part,maxResults,order,selectedCategory,regionCode,type)
             }
 

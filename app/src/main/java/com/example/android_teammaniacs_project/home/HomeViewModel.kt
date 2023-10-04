@@ -27,19 +27,9 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     private val _categoryUpperVideoList: MutableLiveData<List<Video>> = MutableLiveData()
     val categoryUpperVideoList: LiveData<List<Video>> get() = _categoryUpperVideoList
 
-    private val _categoryBelowVideoList: MutableLiveData<List<Video>> = MutableLiveData()
-    val categoryBelowVideoList: LiveData<List<Video>> get() = _categoryBelowVideoList
-
     //카테고리 목록을 받기 위한 LiveData 선언
     private val _categoryListUpper: MutableLiveData<List<Category>> = MutableLiveData()
     val categoryListUpper: LiveData<List<Category>> get() = _categoryListUpper
-
-    private val _categoryListBelow: MutableLiveData<List<Category>> = MutableLiveData()
-    val categoryListBelow: LiveData<List<Category>> get() = _categoryListBelow
-
-    //채널 아이디 수집을 위한 LiveData 선언
-    private val _channelId : MutableLiveData<List<String>> = MutableLiveData()
-    val channelId : LiveData<List<String>> get() = _channelId
 
     //채널 데이터 전송을 위한 LiveData
     private val _channelList : MutableLiveData<List<Channel>> = MutableLiveData()
@@ -48,7 +38,6 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultUpperList = ArrayList<Video>()
     private val categoryResultList = ArrayList<Category>()
-    private val channelIdArray = ArrayList<String>()
     private val channelResultList = ArrayList<Channel>()
 
     private val idGenerate = AtomicLong(1L)
@@ -102,7 +91,6 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                 ) {
                     if(viewLocation == "upper") {
                         categoryVideoResultUpperList.clear()
-                        channelIdArray.clear()
                         for (i in response.body()?.items!!) {
                             categoryVideoResultUpperList.add(
                                 Video(
@@ -114,10 +102,8 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                                     i.snippet.description
                                 )
                             )
-                            channelIdArray.add(i.snippet.channelId)
                         }
                         _categoryUpperVideoList.value = categoryVideoResultUpperList
-                        _channelId.value = channelIdArray
                     }
 
                 }
@@ -157,6 +143,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
             })
     }
 
+    //Chanel List API 연동
     fun getChannel(
         key: String,
         part: String,
