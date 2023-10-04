@@ -73,9 +73,9 @@ class MyVideoFragment : Fragment() {
         }
     }
 
-    override fun onResume()= with(binding) {
+    override fun onResume() = with(binding) {
         // 데이터 불러오기
-        //현재는 알파벳순으로 데이터가 불러오고 있음
+        // 현재는 알파벳순으로 데이터가 불러오고 있음
         val sharedPref =
             context?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
 
@@ -85,17 +85,30 @@ class MyVideoFragment : Fragment() {
                 try {
                     val savedData = sharedPref.getString(video.key, null)
                     if (savedData != null) {
-                        val data = Gson(). fromJson(savedData, Video::class.java)
+                        val data = Gson().fromJson(savedData, Video::class.java)
                         dataList.add(data)
                     }
                 } catch (e: Exception) {
                     Log.e("MINJI", e.toString())
                 }
             }
+
+            // 데이터가 없을 때 "비디오가 없습니다" 텍스트를 표시
+            if (dataList.isEmpty()) {
+                tvNoVideos.visibility = View.VISIBLE
+            } else {
+                tvNoVideos.visibility = View.GONE
+            }
+
             viewModel.setData(dataList)
+        } else {
+            // 데이터가 없을 때 "비디오가 없습니다" 텍스트를 표시
+            tvNoVideos.visibility = View.VISIBLE
         }
+
         super.onResume()
     }
+
 
     override fun onDestroyView() {
         _binding = null
