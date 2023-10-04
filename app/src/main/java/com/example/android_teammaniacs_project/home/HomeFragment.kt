@@ -55,9 +55,7 @@ class HomeFragment : Fragment() {
     }
 
     private val section2Adapter by lazy {
-        HomeVideoAdapter(onClickItem = { position, video ->
-            startVideoDetailActivity(position, video)
-        })
+        HomeChannelAdapter()
     }
 
     //API 연동을 위해 입력할 값들 정의
@@ -109,18 +107,11 @@ class HomeFragment : Fragment() {
             section1Adapter.submitList(it)
             section1Adapter.notifyDataSetChanged()
         }
-        categoryBelowVideoList.observe(viewLifecycleOwner) {
-            section2Adapter.submitList(it)
-            section2Adapter.notifyDataSetChanged()
-        }
         categoryListUpper.observe(viewLifecycleOwner) {
             categoryToSpinnerUpperList.addAll(it)
             setupSpinner()
         }
-        categoryListBelow.observe(viewLifecycleOwner) {
-            categoryToSpinnerBelowList.addAll(it)
-            setupSpinner()
-        }
+
     }
 
     //ViewModel의 PopularVideo, Category, Category 별 Video를 받아오는 Api 연동 함수 실행
@@ -155,24 +146,16 @@ class HomeFragment : Fragment() {
     //Spinner 세팅 및 Spinner에 Category들 추가
     private fun setupSpinner()= with(binding){
         val arraySpinnerUpper = categoryToSpinnerUpperList.map {it.title}.toTypedArray()
-        val arraySpinnerBelow = categoryToSpinnerBelowList.map {it.title}.toTypedArray()
 
         val spinnerAdapterUpper: ArrayAdapter<String> = ArrayAdapter<String>(
             contexts,
-            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
+            R.layout.home_spinner_item, // 스피너 아이템 레이아웃
             arraySpinnerUpper
         )
 
-        val spinnerAdapterBelow: ArrayAdapter<String> = ArrayAdapter<String>(
-            contexts,
-            com.example.android_teammaniacs_project.R.layout.home_spinner_item, // 스피너 아이템 레이아웃
-            arraySpinnerBelow
-        )
         spinnerAdapterUpper.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerAdapterBelow.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         homeSpinner.adapter = spinnerAdapterUpper
-        homeSpinner2.adapter = spinnerAdapterBelow
 
         // 스피너 아이템 선택 리스너 설정
         homeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -195,26 +178,7 @@ class HomeFragment : Fragment() {
 
             }
         }
-        homeSpinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>,
-                selectedItemView: View?,
-                position: Int,
-                id: Long,
-            ) {
-                val selectedCategory = arraySpinnerBelow[position]
-                for(i in categoryToSpinnerBelowList) {
-                    if (selectedCategory == i.title) {
-                        viewLocation = "below"
-                        viewModel.getCategoryVideo(key,part,chart,maxResults,i.id,viewLocation)
-                    }
-                }
-            }
 
-            override fun onNothingSelected(parentView: AdapterView<*>) {
-
-            }
-        }
     }
 
 
@@ -226,7 +190,7 @@ class HomeFragment : Fragment() {
             putExtra(HOME_VIDEO_MODEL, video)
         }
         startActivity(intent)
-        activity?.overridePendingTransition(com.example.android_teammaniacs_project.R.drawable.fade_in, com.example.android_teammaniacs_project.R.drawable.fade_out)
+        activity?.overridePendingTransition(R.drawable.fade_in, R.drawable.fade_out)
     }
 
 

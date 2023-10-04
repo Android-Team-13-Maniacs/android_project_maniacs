@@ -34,12 +34,14 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
     private val _categoryListBelow: MutableLiveData<List<Category>> = MutableLiveData()
     val categoryListBelow: LiveData<List<Category>> get() = _categoryListBelow
 
+    //채널 아이디 수집을 위한 LiveData 선언
+    private val _channelId : MutableLiveData<String> = MutableLiveData()
+    val channelId : LiveData<String> get() = _channelId
+
     private val popularResultList = ArrayList<Video>()
     private val categoryVideoResultUpperList = ArrayList<Video>()
     private val categoryVideoResultBelowList = ArrayList<Video>()
     private val categoryResultList = ArrayList<Category>()
-    private val categoryUpperResultList = ArrayList<Category>()
-    private val categoryBelowResultList = ArrayList<Category>()
 
     private val idGenerate = AtomicLong(1L)
 
@@ -152,12 +154,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                             )
                         }
                     }
-                    val middleIndex = categoryResultList.size / 2
-                    categoryUpperResultList.addAll(categoryResultList.subList(0,middleIndex))
-                    categoryBelowResultList.addAll(categoryResultList.subList(middleIndex,categoryResultList.size))
-
-                    _categoryListUpper.value = categoryUpperResultList
-                    _categoryListBelow.value = categoryBelowResultList
+                    _categoryListUpper.value = categoryResultList
                 }
 
                 override fun onFailure(call: Call<CategoryModel>, t: Throwable) {
