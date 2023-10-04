@@ -4,19 +4,20 @@ import SearchFragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.constants.Constants
+import com.example.android_teammaniacs_project.constants.GoogleKey
 import com.example.android_teammaniacs_project.data.Video
 import com.example.android_teammaniacs_project.databinding.VideoDetailActivityBinding
 import com.example.android_teammaniacs_project.home.HomeFragment
 import com.example.android_teammaniacs_project.myVideoPage.MyVideoFragment
+import com.example.android_teammaniacs_project.retrofit.RetrofitClient
 import com.example.android_teammaniacs_project.utils.Utils.convertDateFormat
 import com.google.gson.Gson
-
 
 class VideoDetailActivity : AppCompatActivity() {
     private lateinit var binding: VideoDetailActivityBinding
@@ -24,9 +25,14 @@ class VideoDetailActivity : AppCompatActivity() {
     private var isAdded = false // "My List" 상태를 나타내는 변수
     private var currentVideo: Video? = null
 
-    private val recyclerView by lazy {
-        CommentListAdapter()
-    }
+    private val apiService = RetrofitClient.apiService
+    private val viewModel : VideoDetailViewModel by viewModels {VideoDetailViewModelFactory(apiService)}
+
+    //Channel Api 호출 매개변수
+    private val key = GoogleKey.KEY
+    private val part = "snippet"
+    private var channelId = ""
+    private val maxResults = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,55 +40,31 @@ class VideoDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val homeVideo = intent.getParcelableExtra<Video>(HomeFragment.HOME_VIDEO_MODEL)
-        val homePosition = intent.getIntExtra(HomeFragment.HOME_VIDEO_POSITION, -1)
 
         if (homeVideo != null) {
             // HomeFragment에서 전달한 데이터가 있는 경우
-            this.currentVideo = homeVideo
-            Glide.with(this)
-                .load(homeVideo.image)
-                .into(binding.ivVideo)
-            binding.tvTitle.text = homeVideo.title
-            binding.tvDate.text = convertDateFormat(homeVideo.date)
-            binding.tvDescription.text = homeVideo.description
-            binding.tvChannel.text = homeVideo.channelName
+            setContent(homeVideo)
         } else {
             // HomeFragment에서 전달한 데이터가 없는 경우
             val searchVideo = intent.getParcelableExtra<Video>(SearchFragment.VIDEO_MODEL)
-            val searchPosition = intent.getIntExtra(SearchFragment.VIDEO_POSITION, -1)
 
             if (searchVideo != null) {
                 // SearchFragment에서 전달한 데이터가 있는 경우
-                this.currentVideo = searchVideo
-                Glide.with(this)
-                    .load(searchVideo.image)
-                    .into(binding.ivVideo)
-                binding.tvTitle.text = searchVideo.title
-                binding.tvDate.text = convertDateFormat(searchVideo.date)
-                binding.tvDescription.text = searchVideo.description
-                binding.tvChannel.text = searchVideo.channelName
+                setContent(searchVideo)
             } else {
                 // MyVideoFragment에서 전달한 데이터를 확인
                 val myVideo = intent.getParcelableExtra<Video>(MyVideoFragment.MY_VIDEO_MODEL)
-                val myVideoPosition = intent.getIntExtra(MyVideoFragment.MY_VIDEO_POSITION, -1)
 
                 if (myVideo != null) {
                     // MyVideoFragment에서 전달한 데이터가 있는 경우
-                    this.currentVideo = myVideo
-                    Glide.with(this)
-                        .load(myVideo.image)
-                        .into(binding.ivVideo)
-                    binding.tvTitle.text = myVideo.title
-                    binding.tvDescription.text = myVideo.description
-                    binding.tvChannel.text = myVideo.channelName
-                    binding.tvDate.text = convertDateFormat(myVideo.date)
+                    setContent(myVideo)
                 }
             }
         }
 
         // 현재 비디오가 내 비디오에 저장 되어 있는지 확인
         if(currentVideo != null) {
-            val sharedPref = this?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
+            val sharedPref = this.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
             val checkIfVideoExist = sharedPref?.getString(currentVideo?.title, null)
             if(checkIfVideoExist == null) {
                 this.isAdded = false
@@ -107,37 +89,7 @@ class VideoDetailActivity : AppCompatActivity() {
             onBackPressed()
         }
 
-        //test data
-        val list = ArrayList<CommentModel>()
-        for (i in 0..3) {
-            list.add(
-                CommentModel(
-                    0,
-                    com.example.android_teammaniacs_project.R.drawable.dog,
-                    "$i name",
-                    "$i date",
-                    "$i coment"
-                )
-            )
-            for (i in 0..3) {
-                list.add(CommentModel(0, R.drawable.dog, "$i name", "$i date", "$i coment"))
-            }
-            recyclerView.addItems(list)
-        }
-
-        val shareButton =
-            findViewById<Button>(com.example.android_teammaniacs_project.R.id.btn_Share)
-
-        shareButton.setOnClickListener {
-//            val intent = Intent(Intent.ACTION_SEND)
-//            intent.type = "video/*"
-//
-//            // String으로 받아서 넣기
-//            val sendMessage = "이렇게 스트링으로 만들어서 넣어주면 됩니다."
-//            intent.putExtra(Intent.EXTRA_TEXT, sendMessage)
-//            val shareIntent = Intent.createChooser(intent, "share")
-//            startActivity(shareIntent)
-
+        btnShare.setOnClickListener {
             val videoUrl = currentVideo?.title
             val sendMessage = videoUrl ?: "비디오 URL을 찾을 수 없습니다."
             val intent = Intent(Intent.ACTION_SEND)
@@ -203,9 +155,36 @@ class VideoDetailActivity : AppCompatActivity() {
             saveLikeStatusAndVideoInfoToSharedPreferences()
         }
 
-        val backButton = findViewById<Button>(R.id.btn_back)
-        backButton.setOnClickListener {
+        binding.btnBack.setOnClickListener {
             onBackPressed()
+        }
+
+        setChannelImage()
+        observeVieModel()
+    }
+
+    private fun setContent(video : Video) {
+        this.currentVideo = video
+        Glide.with(this)
+            .load(video.image)
+            .into(binding.ivVideo)
+        binding.tvTitle.text = video.title
+        binding.tvDate.text = convertDateFormat(video.date)
+        binding.tvDescription.text = video.description
+        binding.tvChannel.text = video.channelName
+
+        channelId = video.channelId
+    }
+    //API 호출
+    private fun setChannelImage() {
+        viewModel.getChannelImage(key,part,channelId,maxResults)
+    }
+    // LiveData observe
+    private fun observeVieModel() {
+        viewModel.category.observe(this) {
+            Glide.with(this)
+                .load(it)
+                .into(binding.ivChannel)
         }
     }
 

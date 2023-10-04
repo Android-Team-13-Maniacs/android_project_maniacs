@@ -45,4 +45,13 @@ interface RetrofitInterface {
         @Query("part") part: String,
         @Query("regionCode") regionCode: String
     ): Call<CategoryModel>
+
+    //채널 이미지
+    @GET("youtube/v3/channels")
+    fun getChannel(
+        @Query("key") key : String,
+        @Query("part") part : String,
+        @Query("id") id : String,
+        @Query("maxResults") maxResults : Int
+    ) : Call<ChannelModel>
 }

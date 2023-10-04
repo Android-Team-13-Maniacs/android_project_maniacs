@@ -53,6 +53,7 @@ class HomeViewModel(private val apiService: RetrofitInterface) : ViewModel() {
                 ) {
                     popularResultList.clear()
                     for (i in response.body()?.items!!) {
+                        Log.d("channelid", i.snippet.channelId)
                         popularResultList.add(
                             Video(
                                 i.snippet.thumbnails.high.url,
