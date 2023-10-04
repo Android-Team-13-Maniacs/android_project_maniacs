@@ -2,14 +2,14 @@ package com.example.android_teammaniacs_project.myVideoPage
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.constants.Constants
 import com.example.android_teammaniacs_project.data.Video
@@ -65,11 +65,20 @@ class MyVideoFragment : Fragment() {
     private fun initView() = with(binding) {
         rvVideo.adapter = listAdapter
 
+        btnEdit.setOnClickListener {
+            showProfileDialog()
+        }
     }
 
     private fun initViweModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
+        }
+        profileName.observe(viewLifecycleOwner) { name ->
+            binding.tvProfileName.text = name
+        }
+        profileImageUri.observe(viewLifecycleOwner) {uri ->
+            binding.ivProfile.setImageURI(uri)
         }
     }
 
@@ -109,6 +118,15 @@ class MyVideoFragment : Fragment() {
         super.onResume()
     }
 
+
+    private fun showProfileDialog()= with(binding){
+        ProfileDialog(
+            viewModel.profileName.value,
+            viewModel.profileImageUri.value as? Uri
+        ) { newName, newImageUri ->
+            viewModel.setProfile(newName, newImageUri)
+        }.show(parentFragmentManager, "ProfileDialog")
+    }
 
     override fun onDestroyView() {
         _binding = null

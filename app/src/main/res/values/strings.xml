@@ -7,6 +7,8 @@
     <string name="main_tab_my_videos_title">My Videos</string>
 
     <string name="video_item_title_demo">임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트임시 텍스트</string>
+    <string name="dialog_save">확인</string>
+    <string name="dialog_cancle">취소</string>
 
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
