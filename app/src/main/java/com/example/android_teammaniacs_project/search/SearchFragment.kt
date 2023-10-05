@@ -98,6 +98,7 @@ class SearchFragment : Fragment() {
             }
 
             listAdapter.submitList(items)
+            listAdapter.notifyDataSetChanged()
         }
         viewModel.isLoading.observe(viewLifecycleOwner) {
             isRequestInProgress = it
