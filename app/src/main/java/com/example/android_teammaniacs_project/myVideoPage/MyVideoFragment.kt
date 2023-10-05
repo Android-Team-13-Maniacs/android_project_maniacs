@@ -78,11 +78,30 @@ class MyVideoFragment : Fragment() {
             binding.tvProfileName.text = name
         }
         profileImageUri.observe(viewLifecycleOwner) {uri ->
-            binding.ivProfile.setImageURI(uri)
+            Log.d("Hyunsik", "EFG"+uri)
+
+            val cr = requireActivity().contentResolver
+            uri?.let { cr.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                binding.ivProfile.setImageURI(it)}
+
+            Log.d("Hyunsik", "III")
+
         }
     }
 
     override fun onResume() = with(binding) {
+
+        val sharedPreferences =
+            context?.getSharedPreferences("MyProfilePreferences", Context.MODE_PRIVATE)
+
+        val storedName = sharedPreferences?.getString("profileName", "기본 이름")
+        val storedImageUriString = sharedPreferences?.getString("profileImageUri", null)
+
+        // 불러온 데이터로 프로필 정보 업데이트
+        if (storedName != null) {
+            Log.d("Hyunsik", "ABC")
+            viewModel.setProfile(storedName, storedImageUriString?.let { Uri.parse(it) })
+        }
         // 데이터 불러오기
         // 현재는 알파벳순으로 데이터가 불러오고 있음
         val sharedPref =

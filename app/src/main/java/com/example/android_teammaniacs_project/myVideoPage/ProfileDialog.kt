@@ -3,6 +3,7 @@ package com.example.android_teammaniacs_project.myVideoPage
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -55,6 +56,11 @@ class ProfileDialog(
             if (etContent.text.isNullOrBlank()) {
                 Toast.makeText(context, "닉네임을 입력하세요!", Toast.LENGTH_SHORT).show()
             } else {
+                val newName = etContent.text.toString()
+                val newImageUri = selectedImageUri
+
+                // 데이터를 SharedPreferences에 저장
+                saveProfileData(newName, newImageUri)
                 okCallback(etContent.text.toString(), selectedImageUri)
                 dismiss()
             }
@@ -71,6 +77,17 @@ class ProfileDialog(
             selectedImageUri = it
             ivProfile.setImageURI(it)
         }
+    }
+
+    private fun saveProfileData(name: String, imageUri: Uri?) {
+        val sharedPreferences =
+            context?.getSharedPreferences("MyProfilePreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences?.edit()
+
+        editor?.putString("profileName", name)
+        editor?.putString("profileImageUri", imageUri?.toString())
+
+        editor?.apply()
     }
 
     private fun checkGalleryPermissionAndNavigateGallery() {
@@ -110,8 +127,9 @@ class ProfileDialog(
     }
 
     private fun navigateGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.type = "image/*"
+
         startActivityForResult(intent, PICK_IMAGE_REQUEST_CODE)
     }
 
@@ -120,6 +138,7 @@ class ProfileDialog(
 
         if (requestCode == PICK_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val imageUri: Uri? = data?.data
+            imageUri?.let { activity?.contentResolver?.takePersistableUriPermission(it, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
             selectedImageUri = imageUri
             binding.ivProfile.setImageURI(imageUri)
         }
