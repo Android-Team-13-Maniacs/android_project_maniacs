@@ -5,5 +5,6 @@ class Constants {
     companion object {
         const val GOOGLE_BASE_URL = "https://www.googleapis.com/"
         const val MY_VIDEOS_KEY = "MY_VIDEOS"
+        const val LIKED_VIDEOS_KEY = "MY_LIKED"
     }
 }

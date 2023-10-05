@@ -13,7 +13,7 @@ data class CategoryItem(
     val kind: CategoryKind,
     val etag: String,
     val id: String,
-    val snippet: Snippet
+    val snippet: CategorySnippet
 )
 
 enum class CategoryKind(val value: String) {

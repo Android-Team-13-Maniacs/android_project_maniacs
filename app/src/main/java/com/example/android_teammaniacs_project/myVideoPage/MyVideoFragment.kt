@@ -2,14 +2,14 @@ package com.example.android_teammaniacs_project.myVideoPage
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.android_teammaniacs_project.R
 import com.example.android_teammaniacs_project.constants.Constants
 import com.example.android_teammaniacs_project.data.Video
@@ -62,15 +62,29 @@ class MyVideoFragment : Fragment() {
         initViweModel()
     }
 
+    private fun initView() = with(binding) {
+        rvVideo.adapter = listAdapter
+
+        btnEdit.setOnClickListener {
+            showProfileDialog()
+        }
+    }
+
     private fun initViweModel() = with(viewModel) {
         list.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
         }
+        profileName.observe(viewLifecycleOwner) { name ->
+            binding.tvProfileName.text = name
+        }
+        profileImageUri.observe(viewLifecycleOwner) {uri ->
+            binding.ivProfile.setImageURI(uri)
+        }
     }
 
-    override fun onResume() {
+    override fun onResume() = with(binding) {
         // 데이터 불러오기
-        //현재는 알파벳순으로 데이터가 불러오고 있음
+        // 현재는 알파벳순으로 데이터가 불러오고 있음
         val sharedPref =
             context?.getSharedPreferences(Constants.MY_VIDEOS_KEY, Context.MODE_PRIVATE)
 
@@ -80,22 +94,38 @@ class MyVideoFragment : Fragment() {
                 try {
                     val savedData = sharedPref.getString(video.key, null)
                     if (savedData != null) {
-                        val data = Gson(). fromJson(savedData, Video::class.java)
+                        val data = Gson().fromJson(savedData, Video::class.java)
                         dataList.add(data)
                     }
                 } catch (e: Exception) {
                     Log.e("MINJI", e.toString())
                 }
             }
+
+            // 데이터가 없을 때 "비디오가 없습니다" 텍스트를 표시
+            if (dataList.isEmpty()) {
+                tvNoVideos.visibility = View.VISIBLE
+            } else {
+                tvNoVideos.visibility = View.GONE
+            }
+
             viewModel.setData(dataList)
+        } else {
+            // 데이터가 없을 때 "비디오가 없습니다" 텍스트를 표시
+            tvNoVideos.visibility = View.VISIBLE
         }
+
         super.onResume()
     }
 
-    private fun initView() = with(binding) {
-        rvVideo.adapter = listAdapter
-        val gridManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        rvVideo.layoutManager = gridManager
+
+    private fun showProfileDialog()= with(binding){
+        ProfileDialog(
+            viewModel.profileName.value,
+            viewModel.profileImageUri.value as? Uri
+        ) { newName, newImageUri ->
+            viewModel.setProfile(newName, newImageUri)
+        }.show(parentFragmentManager, "ProfileDialog")
     }
 
     override fun onDestroyView() {

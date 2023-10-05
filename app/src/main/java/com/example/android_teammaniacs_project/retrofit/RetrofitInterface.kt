@@ -24,7 +24,8 @@ interface RetrofitInterface {
         @Query("maxResults") maxResults: Int,
         @Query("order") order: String,
         @Query("q") q: String?,
-        @Query("type") type: String
+        @Query("type") type: String,
+        @Query("pageToken") pageToken : String?
     ): Call<SearchVideoModel>
 
     //카테고리 별 영상
@@ -44,4 +45,25 @@ interface RetrofitInterface {
         @Query("part") part: String,
         @Query("regionCode") regionCode: String
     ): Call<CategoryModel>
+
+    //채널 이미지
+    @GET("youtube/v3/channels")
+    fun getChannel(
+        @Query("key") key : String,
+        @Query("part") part : String,
+        @Query("id") id : String,
+        @Query("maxResults") maxResults : Int
+    ) : Call<ChannelModel>
+
+    //채널 검색
+    @GET("youtube/v3/search")
+    fun getChannelList(
+        @Query("key") key: String,
+        @Query("part") part: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("order") order: String,
+        @Query("q") q: String?,
+        @Query("regionCode") regionCode : String,
+        @Query("type") type: String,
+    ): Call<SearchVideoModel>
 }
