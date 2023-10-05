@@ -122,7 +122,7 @@ class MyVideoFragment : Fragment() {
     private fun showProfileDialog()= with(binding){
         ProfileDialog(
             viewModel.profileName.value,
-            viewModel.profileImageUri.value as? Uri
+            viewModel.profileImageUri.value
         ) { newName, newImageUri ->
             viewModel.setProfile(newName, newImageUri)
         }.show(parentFragmentManager, "ProfileDialog")

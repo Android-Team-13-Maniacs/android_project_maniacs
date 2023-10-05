@@ -37,17 +37,9 @@ class MyVideoViewModel : ViewModel() {
 
 
     fun setProfile(name: String, imageUri: Uri?) {
-        if(imageUri == null){
-            return
-        }
         _profileName.value = name
         _profileImageUri.value = imageUri
-//        sharedPreferences.edit().putString("profileName", name).apply()
-
     }
 
-    fun setProfileImage(imageUri: Uri?) {
-        _profileImageUri.value = imageUri
-    }
 
 }
