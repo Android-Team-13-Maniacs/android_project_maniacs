@@ -86,7 +86,10 @@
   - 스피너를 선택하여 **카테고리 이동** 가능
 
 - 선택한 카데고리에 맞춰 **채널 추천** (가로 슬라이드)
+
 - 모든 아이템은 클릭할시 **디테일 페이지로 이동**
+  
+- NullPointerException 예외 처리하여 영상을 불러오지 못한 경우 Toast Message 출력
 
 </br>
 
@@ -108,6 +111,8 @@
 
 - 모든 아이템은 클릭할시 **디테일 페이지로 이동**
 
+- NullPointerException 예외 처리하여 영상을 불러오지 못한 경우 Toast Message 출력
+
 </br>
 
 ### **3) DetailActivtiy**
@@ -126,6 +131,8 @@
 
 - Detail page 시작과 종료시 **Fade Effect** 추가
 
+- NullPointerException 예외 처리하여 영상을 불러오지 못한 경우 Toast Message 출력
+
 </br>
 
 ### **4) MyPageFragment**
@@ -143,6 +150,8 @@
   - 다이얼로그 취소버튼 클릭시 정말 취소 하겠냐는 팝업문구 띄워짐
 
 - My Video 및 좋아요 Shared Preference 저장 되어 있어서 어플을 종료해도 화면에 반영됨
+
+- NullPointerException 예외 처리하여 영상을 불러오지 못한 경우 Toast Message 출력
 
 </br>
 
