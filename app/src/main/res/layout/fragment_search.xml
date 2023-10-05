@@ -105,6 +105,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="40dp"
         app:tint="@null"
+        android:visibility="invisible"
         tools:ignore="ContentDescription"/>
 
     <TextView
